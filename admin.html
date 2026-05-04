@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Painel - Cabocos Bar</title>
+        <link rel="stylesheet" href="css/admin.css">
+    </head>
+    <body>
+        <header class="admin-header">
+            <h1>📋 Pedidos - Cabocos Bar</h1>
+            <button onclick="logout()">Sair</button>
+        </header>
+        <main class="admin-container">
+            <section class="filters">
+                <button onclick="filterStatus('ALL')">Todos</button>
+                <button onclick="filterStatus('NOVO')">Novos</button>
+                <button onclick="filterStatus('PREPARO')">Em preparo</button>
+                <button onclick="filterStatus('FINALIZADO')">Finalizados</button>
+            </section>
+            <section id="orders" class="orders">
+                <p>Carregando pedidos...</p>
+            </section>
+        </main>
+        <script src="admin.js"></script>
+    </body>
+</html>

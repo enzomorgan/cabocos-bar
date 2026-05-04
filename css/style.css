@@ -305,3 +305,179 @@ textarea {
     font-weight: bold;
     cursor: pointer;
 }
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    overflow-x: hidden;
+    padding-bottom: 100px;
+}
+
+button,
+input,
+select,
+textarea {
+    font-size: 16px;
+}
+
+button {
+    min-height: 44px;
+}
+
+.header {
+    gap: 12px;
+}
+
+.cart-btn {
+    white-space: nowrap;
+}
+
+.menu {
+    width: 100%;
+}
+
+.card {
+    width: 100%;
+}
+
+.cart-content {
+    width: 95%;
+    max-width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* Botão voltar */
+.back-btn {
+    grid-column: 1 / -1;
+    width: fit-content;
+    background: #f7c948;
+    color: #000;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Celular */
+@media (max-width: 600px) {
+    .header {
+        padding: 12px;
+        align-items: center;
+    }
+
+    .header h1 {
+        font-size: 20px;
+    }
+
+    .header p {
+        font-size: 12px;
+    }
+
+    .cart-btn {
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+        z-index: 999;
+        padding: 12px 16px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    }
+
+    .hero {
+        padding: 24px 14px;
+    }
+
+    .hero h2 {
+        font-size: 28px;
+    }
+
+    .hero p {
+        font-size: 14px;
+    }
+
+    .categories {
+        padding: 12px;
+        gap: 8px;
+    }
+
+    .categories button {
+        font-size: 14px;
+        padding: 10px 14px;
+    }
+
+    .menu {
+        grid-template-columns: 1fr;
+        padding: 14px;
+        gap: 14px;
+    }
+
+    .category-title {
+        font-size: 22px;
+    }
+
+    .card {
+        padding: 14px;
+        border-radius: 16px;
+    }
+
+    .card h3 {
+        font-size: 21px;
+    }
+
+    .card p {
+        font-size: 14px;
+    }
+
+    .options button {
+        width: 100%;
+        font-size: 15px;
+    }
+
+    .cart-modal {
+        padding: 10px;
+    }
+
+    .cart-content {
+        width: 100%;
+        padding: 18px;
+        border-radius: 18px;
+    }
+
+    .close {
+        font-size: 30px;
+    }
+
+    .cart-actions {
+        flex-wrap: wrap;
+    }
+
+    .cart-actions button {
+        flex: 1;
+    }
+
+    input,
+    select,
+    textarea {
+        font-size: 16px;
+    }
+}
+
+/* Tablet */
+@media (min-width: 601px) and (max-width: 1049px) {
+    .menu {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 18px;
+    }
+}
+
+/* Desktop */
+@media (min-width: 1050px) {
+    .menu {
+        grid-template-columns: repeat(3, 1fr);
+        max-width: 1200px;
+        margin: auto;
+    }
+}

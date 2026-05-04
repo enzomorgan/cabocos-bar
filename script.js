@@ -1,13 +1,5 @@
-/*
-    © 2026 ENZO MORGAN SANTOS DE MELO
-    Todos os direitos reservados.
-*/
+import { db, collection, addDoc } from "./firebase.js";
 
-
-
-
-
-const WHATSAPP_NUMBER = "5584999316294";
 
 const EDGES = [
     { name: "Sem borda", price: 0 },
@@ -167,14 +159,6 @@ function formatPrice(value) {
     return value.toFixed(2).replace(".", ",");
 }
 
-function slug(text) {
-    return text
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-z0-9]+/g, "-");
-}
-
 function isPizzaCategory(category) {
     return category.toLowerCase().includes("pizza");
 }
@@ -215,6 +199,7 @@ function getPromotionPizzaGCount() {
         if (item.type === "pizza" && item.size === "G") {
             return total + item.qty;
         }
+
         return total;
     }, 0);
 }
@@ -599,7 +584,7 @@ document.getElementById("paymentMethod").addEventListener("change", function () 
     }
 });
 
-document.getElementById("orderForm").addEventListener("submit", function (event) {
+document.getElementById("orderForm").addEventListener("submit", async function (event) {
     event.preventDefault();
 
     if (cart.length === 0) {
@@ -622,50 +607,50 @@ document.getElementById("orderForm").addEventListener("submit", function (event)
     const promoQty = getPromotionPizzaGCount();
     const promoDrink = document.getElementById("promoDrink")?.value || "";
 
-    const orderItems = cart.map(item => {
-        let line = `- ${item.qty}x ${item.name}`;
+    const orderData = {
+        cliente: name,
+        endereco: address,
+        observacoes: obs,
+        pagamento: payment,
+        itens: cart.map(item => ({ ...item })),
+        total,
+        promocao: promoQty > 0
+            ? {
+                quantidade: promoQty,
+                bebida: promoDrink,
+            }
+            : null,
+        status: "NOVO",
+        criadoEm: new Date().toISOString(),
+    };
 
-        if (item.type === "pizza") {
-            line += `\n  Tamanho: ${item.size}`;
+    try {
+    await addDoc(collection(db, "pedidos"), orderData);
 
-            line += item.flavor2
-                ? `\n  Sabores: metade ${item.flavor1} / metade ${item.flavor2}`
-                : `\n  Sabor: ${item.flavor1}`;
+    alert("Pedido enviado com sucesso!");
 
-            line += `\n  Borda: ${item.edge}`;
-            line += `\n  Valor unitário: R$ ${formatPrice(item.price)}`;
-            line += `\n  Subtotal: R$ ${formatPrice(item.price * item.qty)}`;
-        } else {
-            line += ` (${item.size}) - R$ ${formatPrice(item.price * item.qty)}`;
-        }
+    cart = [];
+    updateCart();
+    closeCart();
 
-        return line;
-    }).join("\n\n");
+    document.getElementById("orderForm").reset();
+    document.getElementById("pixBox").classList.add("hidden");
 
-    let message = `*🧾 Novo Pedido - Cabocos Bar*\n\n`;
-    message += `👤 *Cliente:* ${name}\n`;
-    message += `📍 *Endereço:* ${address}\n\n`;
-    message += `🍽️ *Pedido:*\n${orderItems}\n\n`;
+} catch (error) {
+    console.error("Erro ao salvar pedido:", error);
+    alert("Erro ao enviar pedido.");
+}
 
-    if (promoQty > 0) {
-        message += `🎁 *Promoção de quinta-feira:*\n`;
-        message += `${promoQty} refrigerante(s) de 1L grátis\n`;
-        message += `Opção escolhida: ${promoDrink}\n\n`;
-    }
+    console.log("Pedido finalizado:", orderData);
 
-    message += `💰 *Total:* R$ ${formatPrice(total)}\n`;
-    message += `💳 *Pagamento:* ${payment}\n`;
+    alert("Pedido finalizado com sucesso!");
 
-    if (obs) {
-        message += `📝 *Observações:* ${obs}\n`;
-    }
+    cart = [];
+    updateCart();
+    closeCart();
 
-    if (payment === "Pix") {
-        message += `\n*Pagamento via Pix.* Cliente deve enviar o comprovante aqui no WhatsApp em seguida.`;
-    }
-
-    const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`, "_blank");
+    document.getElementById("orderForm").reset();
+    document.getElementById("pixBox").classList.add("hidden");
 });
 
 renderCategories();
