@@ -1,6 +1,5 @@
 import { db, collection, addDoc } from "./firebase.js";
 
-
 const EDGES = [
     { name: "Sem borda", price: 0 },
     { name: "Requeijão", price: 0 },
@@ -212,13 +211,13 @@ function renderCategories() {
     const container = document.getElementById("categories");
 
     container.innerHTML = mainCategories.map(category => `
-    <button 
-      onclick="selectMainCategory('${category.name}')"
-      class="${selectedMainCategory === category.name ? "active" : ""}"
-    >
-      ${category.name}
-    </button>
-  `).join("");
+        <button 
+            onclick="selectMainCategory('${category.name}')"
+            class="${selectedMainCategory === category.name ? "active" : ""}"
+        >
+            ${category.name}
+        </button>
+    `).join("");
 }
 
 function renderMenu() {
@@ -226,21 +225,21 @@ function renderMenu() {
 
     if (!selectedMainCategory) {
         container.innerHTML = `
-      <h2 class="category-title">Escolha uma opção</h2>
+            <h2 class="category-title">Escolha uma opção</h2>
 
-      ${mainCategories.map(category => `
-        <article class="card">
-          <h3>${category.name}</h3>
-          <p>${category.description}</p>
+            ${mainCategories.map(category => `
+                <article class="card">
+                    <h3>${category.name}</h3>
+                    <p>${category.description}</p>
 
-          <div class="options">
-            <button onclick="selectMainCategory('${category.name}')">
-              Ver ${category.name}
-            </button>
-          </div>
-        </article>
-      `).join("")}
-    `;
+                    <div class="options">
+                        <button onclick="selectMainCategory('${category.name}')">
+                            Ver ${category.name}
+                        </button>
+                    </div>
+                </article>
+            `).join("")}
+        `;
         return;
     }
 
@@ -250,22 +249,22 @@ function renderMenu() {
 
     if (!selectedSubCategory && main.sections.length > 1) {
         container.innerHTML = `
-      <button class="back-btn" onclick="goBackMenu()">← Voltar</button>
-      <h2 class="category-title">${selectedMainCategory}</h2>
+            <button class="back-btn" onclick="goBackMenu()">← Voltar</button>
+            <h2 class="category-title">${selectedMainCategory}</h2>
 
-      ${main.sections.map(sectionName => `
-        <article class="card">
-          <h3>${sectionName}</h3>
-          <p>Clique para ver os produtos.</p>
+            ${main.sections.map(sectionName => `
+                <article class="card">
+                    <h3>${sectionName}</h3>
+                    <p>Clique para ver os produtos.</p>
 
-          <div class="options">
-            <button onclick="selectSubCategory('${sectionName}')">
-              Ver opções
-            </button>
-          </div>
-        </article>
-      `).join("")}
-    `;
+                    <div class="options">
+                        <button onclick="selectSubCategory('${sectionName}')">
+                            Ver opções
+                        </button>
+                    </div>
+                </article>
+            `).join("")}
+        `;
         return;
     }
 
@@ -274,42 +273,43 @@ function renderMenu() {
 
     if (!section) {
         container.innerHTML = `
-      <button class="back-btn" onclick="goBackMenu()">← Voltar</button>
-      <h2 class="category-title">Categoria não encontrada</h2>
-    `;
+            <button class="back-btn" onclick="goBackMenu()">← Voltar</button>
+            <h2 class="category-title">Categoria não encontrada</h2>
+        `;
         return;
     }
 
     container.innerHTML = `
-    <button class="back-btn" onclick="goBackMenu()">← Voltar</button>
-    <h2 class="category-title">${section.category}</h2>
+        <button class="back-btn" onclick="goBackMenu()">← Voltar</button>
+        <h2 class="category-title">${section.category}</h2>
 
-    ${section.items.map(item => `
-      <article class="card">
-        <h3>${item.name}</h3>
-        <p>${item.desc}</p>
+        ${section.items.map(item => `
+            <article class="card">
+                <h3>${item.name}</h3>
+                <p>${item.desc}</p>
 
-        <div class="options">
-          ${isPizzaCategory(section.category)
-            ? `<button onclick="openPizzaModal('${item.name}')">
-                  Escolher ${item.name}
-                </button>`
-            : item.options.map(option => `
-                  <button onclick="addToCart({
-                    type: 'normal',
-                    category: '${section.category}',
-                    name: '${item.name}',
-                    size: '${option.label}',
-                    price: ${option.price}
-                  })">
-                    ${option.label} - R$ ${formatPrice(option.price)}
-                  </button>
-                `).join("")
-        }
-        </div>
-      </article>
-    `).join("")}
-  `;
+                <div class="options">
+                    ${
+                        isPizzaCategory(section.category)
+                            ? `<button onclick="openPizzaModal('${item.name}')">
+                                Escolher ${item.name}
+                            </button>`
+                            : item.options.map(option => `
+                                <button onclick="addToCart({
+                                    type: 'normal',
+                                    category: '${section.category}',
+                                    name: '${item.name}',
+                                    size: '${option.label}',
+                                    price: ${option.price}
+                                })">
+                                    ${option.label} - R$ ${formatPrice(option.price)}
+                                </button>
+                            `).join("")
+                    }
+                </div>
+            </article>
+        `).join("")}
+    `;
 }
 
 function selectMainCategory(name) {
@@ -373,19 +373,19 @@ function updateCart() {
     }
 
     cartItems.innerHTML = cart.map((item, index) => `
-    <div class="cart-item">
-      <strong>${item.name}</strong>
-      <p>${getItemDetails(item)}</p>
-      <p>R$ ${formatPrice(item.price)} x ${item.qty}</p>
-      <p>Subtotal: R$ ${formatPrice(item.price * item.qty)}</p>
+        <div class="cart-item">
+            <strong>${item.name}</strong>
+            <p>${getItemDetails(item)}</p>
+            <p>R$ ${formatPrice(item.price)} x ${item.qty}</p>
+            <p>Subtotal: R$ ${formatPrice(item.price * item.qty)}</p>
 
-      <div class="cart-actions">
-        <button type="button" onclick="changeQty(${index}, -1)">-</button>
-        <button type="button" onclick="changeQty(${index}, 1)">+</button>
-        <button type="button" onclick="removeItem(${index})">Remover</button>
-      </div>
-    </div>
-  `).join("");
+            <div class="cart-actions">
+                <button type="button" onclick="changeQty(${index}, -1)">-</button>
+                <button type="button" onclick="changeQty(${index}, 1)">+</button>
+                <button type="button" onclick="removeItem(${index})">Remover</button>
+            </div>
+        </div>
+    `).join("");
 
     const promoQty = getPromotionPizzaGCount();
 
@@ -393,14 +393,14 @@ function updateCart() {
         if (promoQty > 0) {
             promoBox.classList.remove("hidden");
             promoBox.innerHTML = `
-        <strong>Promoção de quinta-feira</strong>
-        <p>Você ganhou ${promoQty} refrigerante(s) de 1L.</p>
-        <label>Escolha o refrigerante:</label>
-        <select id="promoDrink">
-          <option value="Guaraná 1L">Guaraná 1L</option>
-          <option value="Pepsi 1L">Pepsi 1L</option>
-        </select>
-      `;
+                <strong>Promoção de quinta-feira</strong>
+                <p>Você ganhou ${promoQty} refrigerante(s) de 1L.</p>
+                <label>Escolha o refrigerante:</label>
+                <select id="promoDrink">
+                    <option value="Guaraná 1L">Guaraná 1L</option>
+                    <option value="Pepsi 1L">Pepsi 1L</option>
+                </select>
+            `;
         } else {
             promoBox.classList.add("hidden");
             promoBox.innerHTML = "";
@@ -466,31 +466,31 @@ function openPizzaModal(selectedFlavor) {
     const allFlavors = getAllPizzaFlavors();
 
     pizzaSize.innerHTML = `
-    <option value="P">P</option>
-    <option value="M">M</option>
-    <option value="G">G</option>
-  `;
+        <option value="P">P</option>
+        <option value="M">M</option>
+        <option value="G">G</option>
+    `;
 
     pizzaFlavor1.innerHTML = allFlavors.map(flavor => `
-    <option value="${flavor.name}" ${flavor.name === selectedFlavor ? "selected" : ""}>
-      ${flavor.name}
-    </option>
-  `).join("");
+        <option value="${flavor.name}" ${flavor.name === selectedFlavor ? "selected" : ""}>
+            ${flavor.name}
+        </option>
+    `).join("");
 
     pizzaFlavor2.innerHTML = `
-    <option value="">Somente esse sabor</option>
-    ${allFlavors.map(flavor => `
-      <option value="${flavor.name}">
-        Adicionar metade ${flavor.name}
-      </option>
-    `).join("")}
-  `;
+        <option value="">Somente esse sabor</option>
+        ${allFlavors.map(flavor => `
+            <option value="${flavor.name}">
+                Adicionar metade ${flavor.name}
+            </option>
+        `).join("")}
+    `;
 
     pizzaEdge.innerHTML = EDGES.map(edge => `
-    <option value="${edge.name}">
-      ${edge.name}${edge.price > 0 ? ` + R$ ${formatPrice(edge.price)}` : ""}
-    </option>
-  `).join("");
+        <option value="${edge.name}">
+            ${edge.name}${edge.price > 0 ? ` + R$ ${formatPrice(edge.price)}` : ""}
+        </option>
+    `).join("");
 
     pizzaSize.onchange = updatePizzaPreview;
     pizzaFlavor1.onchange = updatePizzaPreview;
@@ -574,13 +574,15 @@ function confirmPizza() {
 
 document.getElementById("paymentMethod").addEventListener("change", function () {
     const pixBox = document.getElementById("pixBox");
+    const pixProof = document.getElementById("pixProof");
 
     if (this.value === "Pix") {
         pixBox.classList.remove("hidden");
-        document.getElementById("pixProof").setAttribute("required", "required");
+        pixProof.setAttribute("required", "required");
     } else {
         pixBox.classList.add("hidden");
-        document.getElementById("pixProof").removeAttribute("required");
+        pixProof.removeAttribute("required");
+        pixProof.value = "";
     }
 });
 
@@ -625,33 +627,35 @@ document.getElementById("orderForm").addEventListener("submit", async function (
     };
 
     try {
-    await addDoc(collection(db, "pedidos"), orderData);
+        await addDoc(collection(db, "pedidos"), orderData);
 
-    alert("Pedido enviado com sucesso!");
+        console.log("Pedido salvo:", orderData);
+        alert("Pedido enviado com sucesso!");
 
-    cart = [];
-    updateCart();
-    closeCart();
+        cart = [];
+        updateCart();
+        closeCart();
 
-    document.getElementById("orderForm").reset();
-    document.getElementById("pixBox").classList.add("hidden");
-
-} catch (error) {
-    console.error("Erro ao salvar pedido:", error);
-    alert("Erro ao enviar pedido.");
-}
-
-    console.log("Pedido finalizado:", orderData);
-
-    alert("Pedido finalizado com sucesso!");
-
-    cart = [];
-    updateCart();
-    closeCart();
-
-    document.getElementById("orderForm").reset();
-    document.getElementById("pixBox").classList.add("hidden");
+        document.getElementById("orderForm").reset();
+        document.getElementById("pixBox").classList.add("hidden");
+        document.getElementById("pixProof").removeAttribute("required");
+    } catch (error) {
+        console.error("Erro ao salvar pedido:", error);
+        alert("Erro ao enviar pedido. Tente novamente.");
+    }
 });
+
+window.selectMainCategory = selectMainCategory;
+window.selectSubCategory = selectSubCategory;
+window.goBackMenu = goBackMenu;
+window.addToCart = addToCart;
+window.changeQty = changeQty;
+window.removeItem = removeItem;
+window.openCart = openCart;
+window.closeCart = closeCart;
+window.openPizzaModal = openPizzaModal;
+window.closePizzaModal = closePizzaModal;
+window.confirmPizza = confirmPizza;
 
 renderCategories();
 renderMenu();
