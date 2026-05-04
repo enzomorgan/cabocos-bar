@@ -3,25 +3,76 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Painel - Cabocos Bar</title>
+        <title>Painel Administrativo - Cabocos Bar</title>
         <link rel="stylesheet" href="css/admin.css">
     </head>
+
     <body>
         <header class="admin-header">
-            <h1>📋 Pedidos - Cabocos Bar</h1>
-            <button onclick="logout()">Sair</button>
+            <div>
+                <h1>Cabocos Bar</h1>
+                <p>Painel Administrativo de Pedidos</p>
+            </div>
+
+            <a href="index.html" class="back-site-btn">
+                Ver cardápio
+            </a>
         </header>
+
         <main class="admin-container">
-            <section class="filters">
-                <button onclick="filterStatus('ALL')">Todos</button>
-                <button onclick="filterStatus('NOVO')">Novos</button>
-                <button onclick="filterStatus('PREPARO')">Em preparo</button>
-                <button onclick="filterStatus('FINALIZADO')">Finalizados</button>
+            <section class="summary">
+                <div class="summary-card">
+                    <span>Total de pedidos</span>
+                    <strong id="totalOrders">0</strong>
+                </div>
+
+                <div class="summary-card">
+                    <span>Pedidos novos</span>
+                    <strong id="newOrders">0</strong>
+                </div>
+
+                <div class="summary-card">
+                    <span>Total vendido</span>
+                    <strong id="totalSold">R$ 0,00</strong>
+                </div>
             </section>
+
+            <section class="filters">
+                <button type="button" onclick="filterStatus('TODOS')" class="active">
+                    Todos
+                </button>
+
+                <button type="button" onclick="filterStatus('NOVO')">
+                    Novos
+                </button>
+
+                <button type="button" onclick="filterStatus('PREPARO')">
+                    Em preparo
+                </button>
+
+                <button type="button" onclick="filterStatus('ENTREGA')">
+                    Saiu para entrega
+                </button>
+
+                <button type="button" onclick="filterStatus('FINALIZADO')">
+                    Finalizados
+                </button>
+
+                <button type="button" onclick="filterStatus('CANCELADO')">
+                    Cancelados
+                </button>
+            </section>
+
+            <section class="orders-header">
+                <h2>Pedidos recebidos</h2>
+                <p id="ordersInfo">Carregando pedidos...</p>
+            </section>
+
             <section id="orders" class="orders">
-                <p>Carregando pedidos...</p>
+                <p class="empty-message">Carregando pedidos...</p>
             </section>
         </main>
-        <script src="admin.js"></script>
+
+        <script type="module" src="admin.js"></script>
     </body>
 </html>
