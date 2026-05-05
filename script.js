@@ -1,5 +1,7 @@
 import { db, collection, addDoc } from "./firebase.js";
 
+const WHATSAPP_NUMBER = "5584999316294";
+
 const EDGES = [
     { name: "Sem borda", price: 0 },
     { name: "Requeijão", price: 0 },
@@ -155,7 +157,7 @@ function pastelCabocos() {
 }
 
 function formatPrice(value) {
-    return value.toFixed(2).replace(".", ",");
+    return Number(value || 0).toFixed(2).replace(".", ",");
 }
 
 function isPizzaCategory(category) {
@@ -572,6 +574,53 @@ function confirmPizza() {
     closePizzaModal();
 }
 
+function buildWhatsAppMessage(orderData) {
+    const itemsText = orderData.itens.map(item => {
+        if (item.type === "pizza") {
+            let text = `- ${item.qty}x ${item.name}\n`;
+            text += `  Tamanho: ${item.size}\n`;
+
+            if (item.flavor2) {
+                text += `  Sabores: metade ${item.flavor1} / metade ${item.flavor2}\n`;
+            } else {
+                text += `  Sabor: ${item.flavor1}\n`;
+            }
+
+            text += `  Borda: ${item.edge}\n`;
+            text += `  Valor unitário: R$ ${formatPrice(item.price)}\n`;
+            text += `  Subtotal: R$ ${formatPrice(item.price * item.qty)}`;
+
+            return text;
+        }
+
+        return `- ${item.qty}x ${item.name} (${item.size}) - R$ ${formatPrice(item.price * item.qty)}`;
+    }).join("\n\n");
+
+    let message = `*🧾 Novo Pedido - Cabocos Bar*\n\n`;
+    message += `👤 *Cliente:* ${orderData.cliente}\n`;
+    message += `📍 *Endereço:* ${orderData.endereco}\n\n`;
+    message += `🍽️ *Pedido:*\n${itemsText}\n\n`;
+
+    if (orderData.promocao) {
+        message += `🎁 *Promoção de quinta-feira:*\n`;
+        message += `${orderData.promocao.quantidade} refrigerante(s) de 1L grátis\n`;
+        message += `Opção escolhida: ${orderData.promocao.bebida}\n\n`;
+    }
+
+    message += `💰 *Total:* R$ ${formatPrice(orderData.total)}\n`;
+    message += `💳 *Pagamento:* ${orderData.pagamento}\n`;
+
+    if (orderData.observacoes) {
+        message += `📝 *Observações:* ${orderData.observacoes}\n`;
+    }
+
+    if (orderData.pagamento === "Pix") {
+        message += `\n*Pagamento via Pix.* Cliente deve enviar o comprovante aqui no WhatsApp em seguida.`;
+    }
+
+    return message;
+}
+
 document.getElementById("paymentMethod").addEventListener("change", function () {
     const pixBox = document.getElementById("pixBox");
     const pixProof = document.getElementById("pixProof");
@@ -629,8 +678,12 @@ document.getElementById("orderForm").addEventListener("submit", async function (
     try {
         await addDoc(collection(db, "pedidos"), orderData);
 
-        console.log("Pedido salvo:", orderData);
-        alert("Pedido enviado com sucesso!");
+        const message = buildWhatsAppMessage(orderData);
+        const encodedMessage = encodeURIComponent(message);
+
+        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`, "_blank");
+
+        alert("Pedido enviado com sucesso! Continue pelo WhatsApp para acompanhar seu pedido.");
 
         cart = [];
         updateCart();
