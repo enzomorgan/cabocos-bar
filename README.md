@@ -83,12 +83,14 @@ OBSERVAÇÕES IMPORTANTES
 
 AUTOR
 
-Desenvolvido por: ENZO MORGAN SANTOS DE MELO
+Desenvolvido por: Roberto Fernandes Rocha
+Empresa: 63.176.182 ROBERTO FERNANDES ROCHA (MEI)
+CNPJ: 63.176.182/0001-76
 
-------------------------------------------------------------
+Co-autor: Enzo Morgan Santos de Melo
 
-LICENÇA
+© 2026 63.176.182 ROBERTO FERNANDES ROCHA (MEI). Todos os direitos reservados.
 
-Este projeto é proprietário. Todos os direitos reservados.
+Este sistema é um software proprietário e confidencial. O uso, cópia, modificação, distribuição ou qualquer forma de disponibilização não autorizada é expressamente proibido.
 
-É proibido copiar, modificar, distribuir ou utilizar este software sem autorização do autor.
+Consulte o arquivo LICENSE para mais detalhes sobre direitos de uso, restrições e titularidade.
