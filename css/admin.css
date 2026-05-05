@@ -4,16 +4,29 @@
     padding: 0;
 }
 
+:root {
+    --bg-main: #080B1F;
+    --bg-header: #080B1F;
+    --bg-card: #11152B;
+    --bg-card-soft: #161A33;
+    --bg-deep: #0C1026;
+    --border: #252B4A;
+    --border-soft: #30385F;
+    --yellow: #f7c948;
+    --white: #ffffff;
+    --muted: #cfcfcf;
+}
+
 body {
     font-family: Arial, sans-serif;
-    background: #0b0b0b;
-    color: #ffffff;
+    background: var(--bg-main);
+    color: var(--white);
     min-height: 100vh;
 }
 
 .admin-header {
-    background: #000000;
-    border-bottom: 2px solid #f7c948;
+    background: var(--bg-header);
+    border-bottom: 2px solid var(--yellow);
     padding: 18px;
     display: flex;
     align-items: center;
@@ -25,7 +38,7 @@ body {
 }
 
 .admin-header h1 {
-    color: #f7c948;
+    color: var(--yellow);
     font-size: 24px;
 }
 
@@ -36,7 +49,7 @@ body {
 }
 
 .back-site-btn {
-    background: #f7c948;
+    background: var(--yellow);
     color: #000000;
     text-decoration: none;
     padding: 10px 16px;
@@ -60,22 +73,22 @@ body {
 }
 
 .summary-card {
-    background: #151515;
-    border: 1px solid #2a2a2a;
-    border-left: 5px solid #f7c948;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-left: 5px solid var(--yellow);
     border-radius: 16px;
     padding: 18px;
 }
 
 .summary-card span {
     display: block;
-    color: #cfcfcf;
+    color: var(--muted);
     font-size: 14px;
     margin-bottom: 8px;
 }
 
 .summary-card strong {
-    color: #f7c948;
+    color: var(--yellow);
     font-size: 26px;
 }
 
@@ -89,9 +102,9 @@ body {
 
 .filters button {
     flex: 0 0 auto;
-    border: 1px solid #333333;
-    background: #1a1a1a;
-    color: #ffffff;
+    border: 1px solid var(--border-soft);
+    background: var(--bg-card);
+    color: var(--white);
     padding: 10px 14px;
     border-radius: 999px;
     cursor: pointer;
@@ -101,7 +114,7 @@ body {
 
 .filters button.active,
 .filters button:hover {
-    background: #f7c948;
+    background: var(--yellow);
     color: #000000;
 }
 
@@ -110,13 +123,13 @@ body {
 }
 
 .orders-header h2 {
-    color: #f7c948;
+    color: var(--yellow);
     font-size: 24px;
     margin-bottom: 6px;
 }
 
 .orders-header p {
-    color: #cfcfcf;
+    color: var(--muted);
 }
 
 .orders {
@@ -126,23 +139,23 @@ body {
 }
 
 .empty-message {
-    background: #151515;
-    border: 1px dashed #444444;
+    background: var(--bg-card);
+    border: 1px dashed var(--border-soft);
     padding: 18px;
     border-radius: 16px;
-    color: #cfcfcf;
+    color: var(--muted);
 }
 
 .order-card {
-    background: #151515;
-    border: 1px solid #2d2d2d;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
     border-radius: 18px;
     padding: 18px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
 .order-card.novo {
-    border-left: 6px solid #f7c948;
+    border-left: 6px solid var(--yellow);
 }
 
 .order-card.preparo {
@@ -170,7 +183,7 @@ body {
 }
 
 .order-top h3 {
-    color: #f7c948;
+    color: var(--yellow);
     font-size: 20px;
     margin-bottom: 4px;
 }
@@ -186,13 +199,13 @@ body {
     border-radius: 999px;
     font-size: 12px;
     font-weight: bold;
-    background: #222222;
-    color: #ffffff;
+    background: var(--bg-card-soft);
+    color: var(--white);
     white-space: nowrap;
 }
 
 .status-badge.novo {
-    background: #f7c948;
+    background: var(--yellow);
     color: #000000;
 }
 
@@ -225,19 +238,19 @@ body {
 }
 
 .order-info strong {
-    color: #f7c948;
+    color: var(--yellow);
 }
 
 .order-items {
-    background: #101010;
-    border: 1px solid #2a2a2a;
+    background: var(--bg-deep);
+    border: 1px solid var(--border);
     border-radius: 14px;
     padding: 14px;
     margin: 14px 0;
 }
 
 .order-items h4 {
-    color: #f7c948;
+    color: var(--yellow);
     margin-bottom: 10px;
 }
 
@@ -248,7 +261,7 @@ body {
 }
 
 .order-items li {
-    border-bottom: 1px solid #2a2a2a;
+    border-bottom: 1px solid var(--border);
     padding-bottom: 10px;
     line-height: 1.45;
 }
@@ -261,7 +274,7 @@ body {
 .order-total {
     font-size: 20px;
     font-weight: bold;
-    color: #f7c948;
+    color: var(--yellow);
     margin: 14px 0;
 }
 
@@ -277,14 +290,14 @@ body {
     width: 100%;
     min-height: 44px;
     border-radius: 12px;
-    border: 1px solid #333333;
+    border: 1px solid var(--border-soft);
     padding: 10px;
     font-size: 15px;
 }
 
 .order-actions select {
-    background: #1b1b1b;
-    color: #ffffff;
+    background: var(--bg-card-soft);
+    color: var(--white);
 }
 
 .order-actions button {
@@ -299,7 +312,7 @@ body {
 }
 
 .save-btn {
-    background: #f7c948;
+    background: var(--yellow);
     color: #000000;
 }
 
