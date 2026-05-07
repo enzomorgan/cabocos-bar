@@ -8,70 +8,107 @@
     </head>
 
     <body>
-        <header class="admin-header">
-            <div>
+        <!-- TELA DE LOGIN -->
+        <section id="loginScreen" class="login-screen">
+            <form id="loginForm" class="login-card">
                 <h1>Cabocos Bar</h1>
-                <p>Painel Administrativo de Pedidos</p>
-            </div>
+                <p>Painel Administrativo</p>
 
-            <a href="index.html" class="back-site-btn">
-                Ver cardápio
-            </a>
-        </header>
+                <input
+                    type="email"
+                    id="adminEmail"
+                    placeholder="E-mail"
+                    required
+                >
 
-        <main class="admin-container">
-            <section class="summary">
-                <div class="summary-card">
-                    <span>Total de pedidos</span>
-                    <strong id="totalOrders">0</strong>
+                <input
+                    type="password"
+                    id="adminPassword"
+                    placeholder="Senha"
+                    required
+                >
+
+                <button type="submit">
+                    Entrar
+                </button>
+
+                <span id="loginError" class="login-error"></span>
+            </form>
+        </section>
+
+        <!-- PAINEL ADMIN -->
+        <section id="adminPanel" class="admin-panel hidden">
+            <header class="admin-header">
+                <div>
+                    <h1>Cabocos Bar</h1>
+                    <p>Painel Administrativo de Pedidos</p>
                 </div>
 
-                <div class="summary-card">
-                    <span>Pedidos novos</span>
-                    <strong id="newOrders">0</strong>
+                <div class="admin-header-actions">
+                    <a href="index.html" class="back-site-btn">
+                        Ver cardápio
+                    </a>
+
+                    <button type="button" class="logout-btn" onclick="logoutAdmin()">
+                        Sair
+                    </button>
                 </div>
+            </header>
 
-                <div class="summary-card">
-                    <span>Total vendido</span>
-                    <strong id="totalSold">R$ 0,00</strong>
-                </div>
-            </section>
+            <main class="admin-container">
+                <section class="summary">
+                    <div class="summary-card">
+                        <span>Total de pedidos</span>
+                        <strong id="totalOrders">0</strong>
+                    </div>
 
-            <section class="filters">
-                <button type="button" onclick="filterStatus('TODOS')" class="active">
-                    Todos
-                </button>
+                    <div class="summary-card">
+                        <span>Pedidos novos</span>
+                        <strong id="newOrders">0</strong>
+                    </div>
 
-                <button type="button" onclick="filterStatus('NOVO')">
-                    Novos
-                </button>
+                    <div class="summary-card">
+                        <span>Total vendido</span>
+                        <strong id="totalSold">R$ 0,00</strong>
+                    </div>
+                </section>
 
-                <button type="button" onclick="filterStatus('PREPARO')">
-                    Em preparo
-                </button>
+                <section class="filters">
+                    <button type="button" onclick="filterStatus('TODOS')" class="active">
+                        Todos
+                    </button>
 
-                <button type="button" onclick="filterStatus('ENTREGA')">
-                    Saiu para entrega
-                </button>
+                    <button type="button" onclick="filterStatus('NOVO')">
+                        Novos
+                    </button>
 
-                <button type="button" onclick="filterStatus('FINALIZADO')">
-                    Finalizados
-                </button>
+                    <button type="button" onclick="filterStatus('PREPARO')">
+                        Em preparo
+                    </button>
 
-                <button type="button" onclick="filterStatus('CANCELADO')">
-                    Cancelados
-                </button>
-            </section>
+                    <button type="button" onclick="filterStatus('ENTREGA')">
+                        Saiu para entrega
+                    </button>
 
-            <section class="orders-header">
-                <h2>Pedidos recebidos</h2>
-                <p id="ordersInfo">Carregando pedidos...</p>
-            </section>
+                    <button type="button" onclick="filterStatus('FINALIZADO')">
+                        Finalizados
+                    </button>
 
-            <section id="orders" class="orders">
-                <p class="empty-message">Carregando pedidos...</p>
-            </section>
-        </main>
+                    <button type="button" onclick="filterStatus('CANCELADO')">
+                        Cancelados
+                    </button>
+                </section>
+
+                <section class="orders-header">
+                    <h2>Pedidos recebidos</h2>
+                    <p id="ordersInfo">Carregando pedidos...</p>
+                </section>
+
+                <section id="orders" class="orders">
+                    <p class="empty-message">Carregando pedidos...</p>
+                </section>
+            </main>
+        </section>
 
         <script type="module" src="admin.js"></script>
     </body>

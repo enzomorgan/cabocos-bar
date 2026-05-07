@@ -1,15 +1,25 @@
 import {
     db,
+    auth,
     collection,
     onSnapshot,
     orderBy,
     query,
     doc,
-    updateDoc
+    updateDoc,
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged
 } from "./firebase.js";
 
 let allOrders = [];
 let currentFilter = "TODOS";
+let unsubscribeOrders = null;
+
+const loginScreen = document.getElementById("loginScreen");
+const adminPanel = document.getElementById("adminPanel");
+const loginForm = document.getElementById("loginForm");
+const loginError = document.getElementById("loginError");
 
 function formatPrice(value) {
     const number = Number(value || 0);
@@ -45,6 +55,56 @@ function statusLabel(status) {
 function statusClass(status) {
     return String(status || "NOVO").toLowerCase();
 }
+
+function showLogin() {
+    loginScreen.classList.remove("hidden");
+    adminPanel.classList.add("hidden");
+
+    if (unsubscribeOrders) {
+        unsubscribeOrders();
+        unsubscribeOrders = null;
+    }
+}
+
+function showAdmin() {
+    loginScreen.classList.add("hidden");
+    adminPanel.classList.remove("hidden");
+    listenOrders();
+}
+
+loginForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const email = document.getElementById("adminEmail").value.trim();
+    const password = document.getElementById("adminPassword").value.trim();
+
+    loginError.textContent = "";
+
+    try {
+        await signInWithEmailAndPassword(auth, email, password);
+        loginForm.reset();
+    } catch (error) {
+        console.error("Erro ao fazer login:", error);
+        loginError.textContent = "E-mail ou senha inválidos.";
+    }
+});
+
+async function logoutAdmin() {
+    try {
+        await signOut(auth);
+    } catch (error) {
+        console.error("Erro ao sair:", error);
+        alert("Erro ao sair do painel.");
+    }
+}
+
+onAuthStateChanged(auth, user => {
+    if (user) {
+        showAdmin();
+    } else {
+        showLogin();
+    }
+});
 
 function renderSummary(orders) {
     const totalOrders = orders.length;
@@ -182,12 +242,16 @@ function renderOrderItems(items) {
 }
 
 function listenOrders() {
+    if (unsubscribeOrders) {
+        return;
+    }
+
     const ordersQuery = query(
         collection(db, "pedidos"),
         orderBy("criadoEm", "desc")
     );
 
-    onSnapshot(ordersQuery, snapshot => {
+    unsubscribeOrders = onSnapshot(ordersQuery, snapshot => {
         allOrders = snapshot.docs.map(document => {
             const data = document.data();
 
@@ -274,5 +338,4 @@ function printOrder(orderId) {
 window.filterStatus = filterStatus;
 window.updateOrderStatus = updateOrderStatus;
 window.printOrder = printOrder;
-
-listenOrders();
+window.logoutAdmin = logoutAdmin;

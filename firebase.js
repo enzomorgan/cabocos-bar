@@ -12,6 +12,13 @@ import {
     updateDoc
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
+import {
+    getAuth,
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+
 const firebaseConfig = {
     apiKey: "AIzaSyDyoKoYeoAkU2Hfy16YN9VSw6zkiY4xSYk",
     authDomain: "cabocos-bar.firebaseapp.com",
@@ -24,9 +31,11 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 export {
     db,
+    auth,
     collection,
     addDoc,
     getDocs,
@@ -34,5 +43,8 @@ export {
     orderBy,
     query,
     doc,
-    updateDoc
+    updateDoc,
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged
 };
