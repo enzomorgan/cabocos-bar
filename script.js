@@ -1,99 +1,341 @@
-import { db, collection, addDoc } from "./firebase.js";
+import { db, collection, addDoc, onSnapshot } from "./firebase.js";
 
 const WHATSAPP_NUMBER = "5584999316294";
 
+let unavailableIngredients = [];
+
 const EDGES = [
-    { name: "Sem borda", price: 0 },
-    { name: "Requeijão", price: 0 },
-    { name: "Cheddar", price: 0 },
-    { name: "Chocolate", price: 8 },
-    { name: "Chocolate branco", price: 8 },
-    { name: "Doce de leite", price: 8 },
-    { name: "Cheddar com bacon", price: 10 },
+    { name: "Sem borda", price: 0, ingredients: [] },
+    { name: "Requeijão", price: 0, ingredients: ["Requeijão"] },
+    { name: "Cheddar", price: 0, ingredients: ["Cheddar"] },
+    { name: "Chocolate", price: 8, ingredients: ["Chocolate"] },
+    { name: "Chocolate branco", price: 8, ingredients: ["Chocolate branco"] },
+    { name: "Doce de leite", price: 8, ingredients: ["Doce de leite"] },
+    { name: "Cheddar com bacon", price: 10, ingredients: ["Cheddar", "Bacon"] },
 ];
 
 const menu = [
     {
         category: "Para encher o bucho",
         items: [
-            { name: "Filé Cabocos", desc: "300g de filé mignon, batata frita e arroz.", options: [{ label: "Unidade", price: 55 }] },
-            { name: "Filé Sertanejo", desc: "300g de filé mignon, queijo qualho e batata frita.", options: [{ label: "Unidade", price: 55 }] },
-            { name: "Carne de sol nata", desc: "Carne de sol desfiada na nata, macaxeira frita e arroz de leite.", options: [{ label: "Unidade", price: 40 }] },
-            { name: "Tripa", desc: "300g de tripa, feijão, batata doce, vinagrete e farofa.", options: [{ label: "Unidade", price: 40 }] },
-            { name: "Calabresa acebolada", desc: "300g de calabresa acebolada, vinagrete e farofa.", options: [{ label: "Unidade", price: 30 }] },
-            { name: "Quarteto arretado", desc: "150g de filé mignon, 150g de calabresa, 150g de frango empanado e batata frita.", options: [{ label: "Unidade", price: 55 }] },
+            {
+                name: "Filé Cabocos",
+                desc: "300g de filé mignon, batata frita e arroz.",
+                ingredients: ["Filé mignon", "Batata", "Arroz"],
+                options: [{ label: "Unidade", price: 55 }]
+            },
+            {
+                name: "Filé Sertanejo",
+                desc: "300g de filé mignon, queijo qualho e batata frita.",
+                ingredients: ["Filé mignon", "Queijo qualho", "Batata"],
+                options: [{ label: "Unidade", price: 55 }]
+            },
+            {
+                name: "Carne de sol nata",
+                desc: "Carne de sol desfiada na nata, macaxeira frita e arroz de leite.",
+                ingredients: ["Carne de sol", "Nata", "Macaxeira", "Arroz"],
+                options: [{ label: "Unidade", price: 40 }]
+            },
+            {
+                name: "Tripa",
+                desc: "300g de tripa, feijão, batata doce, vinagrete e farofa.",
+                ingredients: ["Tripa", "Feijão", "Batata", "Vinagrete", "Farofa"],
+                options: [{ label: "Unidade", price: 40 }]
+            },
+            {
+                name: "Calabresa acebolada",
+                desc: "300g de calabresa acebolada, vinagrete e farofa.",
+                ingredients: ["Calabresa", "Cebola", "Vinagrete", "Farofa"],
+                options: [{ label: "Unidade", price: 30 }]
+            },
+            {
+                name: "Quarteto arretado",
+                desc: "150g de filé mignon, 150g de calabresa, 150g de frango empanado e batata frita.",
+                ingredients: ["Filé mignon", "Calabresa", "Frango", "Batata"],
+                options: [{ label: "Unidade", price: 55 }]
+            },
         ],
     },
     {
         category: "Para beliscar",
         items: [
-            { name: "Batata frita", desc: "300g de batata frita.", options: [{ label: "Unidade", price: 15 }] },
-            { name: "Batata cheddar bacon", desc: "300g de batata frita com cheddar cremoso e bacon.", options: [{ label: "Unidade", price: 20 }] },
-            { name: "Batata Cabocos", desc: "300g de batata frita e carne de sol desfiada na nata.", options: [{ label: "Unidade", price: 25 }] },
-            { name: "Macaxeira frita", desc: "300g de macaxeira frita na manteiga da terra.", options: [{ label: "Unidade", price: 18 }] },
-            { name: "Caldo", desc: "500ml de caldo.", options: [{ label: "Unidade", price: 10 }] },
-            { name: "Porreta", desc: "300g de macaxeira frita na manteiga da terra e costela bovina desfiada.", options: [{ label: "Unidade", price: 25 }] },
-            { name: "Batata suína", desc: "300g de batata frita e carne suína desfiada no barbecue.", options: [{ label: "Unidade", price: 25 }] },
+            {
+                name: "Batata frita",
+                desc: "300g de batata frita.",
+                ingredients: ["Batata"],
+                options: [{ label: "Unidade", price: 15 }]
+            },
+            {
+                name: "Batata cheddar bacon",
+                desc: "300g de batata frita com cheddar cremoso e bacon.",
+                ingredients: ["Batata", "Cheddar", "Bacon"],
+                options: [{ label: "Unidade", price: 20 }]
+            },
+            {
+                name: "Batata Cabocos",
+                desc: "300g de batata frita e carne de sol desfiada na nata.",
+                ingredients: ["Batata", "Carne de sol", "Nata"],
+                options: [{ label: "Unidade", price: 25 }]
+            },
+            {
+                name: "Macaxeira frita",
+                desc: "300g de macaxeira frita na manteiga da terra.",
+                ingredients: ["Macaxeira"],
+                options: [{ label: "Unidade", price: 18 }]
+            },
+            {
+                name: "Caldo",
+                desc: "500ml de caldo.",
+                ingredients: ["Caldo"],
+                options: [{ label: "Unidade", price: 10 }]
+            },
+            {
+                name: "Porreta",
+                desc: "300g de macaxeira frita na manteiga da terra e costela bovina desfiada.",
+                ingredients: ["Macaxeira", "Costela bovina"],
+                options: [{ label: "Unidade", price: 25 }]
+            },
+            {
+                name: "Batata suína",
+                desc: "300g de batata frita e carne suína desfiada no barbecue.",
+                ingredients: ["Batata", "Carne suína"],
+                options: [{ label: "Unidade", price: 25 }]
+            },
         ],
     },
     {
         category: "Pizzas tradicionais",
         items: [
-            { name: "Seridó", desc: "Molho de tomate, queijo muçarela, calabresa, cebolas e orégano.", options: pizzaTradicional() },
-            { name: "Sertaneja", desc: "Molho de tomate, queijo muçarela, carne de sol, requeijão, cebolas e orégano.", options: pizzaTradicional() },
-            { name: "Soledade", desc: "Molho de tomate, queijo muçarela, frango, requeijão, cebolas e orégano.", options: pizzaTradicional() },
-            { name: "Cabugi", desc: "Molho de tomate, queijo muçarela, presunto, ovo, tomate, cebolas e orégano.", options: pizzaTradicional() },
-            { name: "Potengi", desc: "Molho de tomate, queijo muçarela, manjericão, tomate e orégano.", options: pizzaTradicional() },
+            {
+                name: "Seridó",
+                desc: "Molho de tomate, queijo muçarela, calabresa, cebolas e orégano.",
+                ingredients: ["Molho de tomate", "Queijo muçarela", "Calabresa", "Cebola", "Orégano"],
+                options: pizzaTradicional()
+            },
+            {
+                name: "Sertaneja",
+                desc: "Molho de tomate, queijo muçarela, carne de sol, requeijão, cebolas e orégano.",
+                ingredients: ["Molho de tomate", "Queijo muçarela", "Carne de sol", "Requeijão", "Cebola", "Orégano"],
+                options: pizzaTradicional()
+            },
+            {
+                name: "Soledade",
+                desc: "Molho de tomate, queijo muçarela, frango, requeijão, cebolas e orégano.",
+                ingredients: ["Molho de tomate", "Queijo muçarela", "Frango", "Requeijão", "Cebola", "Orégano"],
+                options: pizzaTradicional()
+            },
+            {
+                name: "Cabugi",
+                desc: "Molho de tomate, queijo muçarela, presunto, ovo, tomate, cebolas e orégano.",
+                ingredients: ["Molho de tomate", "Queijo muçarela", "Presunto", "Ovo", "Tomate", "Cebola", "Orégano"],
+                options: pizzaTradicional()
+            },
+            {
+                name: "Potengi",
+                desc: "Molho de tomate, queijo muçarela, manjericão, tomate e orégano.",
+                ingredients: ["Molho de tomate", "Queijo muçarela", "Manjericão", "Tomate", "Orégano"],
+                options: pizzaTradicional()
+            },
         ],
     },
     {
         category: "Pizzas especiais",
         items: [
-            { name: "Cariri", desc: "Molho de tomate, queijo muçarela, calabresa, bacon, cebolas e orégano.", options: pizzaEspecial() },
-            { name: "Nordestina", desc: "Molho de tomate, queijo muçarela, carne de sol, bacon, pimentão, tomate, cebolas e orégano.", options: pizzaEspecial() },
-            { name: "Caipira", desc: "Molho de tomate, queijo muçarela, frango, bacon, cebolas e orégano.", options: pizzaEspecial() },
-            { name: "Cabôco's", desc: "Molho de tomate, queijo qualho, carne de sol na nata, tomate, cebolas e orégano.", options: pizzaEspecial() },
-            { name: "Arretada", desc: "Molho de tomate, queijo muçarela, filé mignon, cebolas e orégano.", options: pizzaEspecial() },
-            { name: "Agreste", desc: "Molho de tomate, queijo muçarela, lombo canadense, cebolas e orégano.", options: pizzaEspecial() },
-            { name: "Arerê", desc: "Molho de tomate, queijo muçarela, carne suína desfiada no barbecue, cebolas, tomate e orégano.", options: pizzaEspecial() },
-            { name: "Mandacaru", desc: "Molho de tomate, queijo qualho, costela bovina desfiada, cebolas, tomate e orégano.", options: pizzaEspecial() },
+            {
+                name: "Cariri",
+                desc: "Molho de tomate, queijo muçarela, calabresa, bacon, cebolas e orégano.",
+                ingredients: ["Molho de tomate", "Queijo muçarela", "Calabresa", "Bacon", "Cebola", "Orégano"],
+                options: pizzaEspecial()
+            },
+            {
+                name: "Nordestina",
+                desc: "Molho de tomate, queijo muçarela, carne de sol, bacon, pimentão, tomate, cebolas e orégano.",
+                ingredients: ["Molho de tomate", "Queijo muçarela", "Carne de sol", "Bacon", "Pimentão", "Tomate", "Cebola", "Orégano"],
+                options: pizzaEspecial()
+            },
+            {
+                name: "Caipira",
+                desc: "Molho de tomate, queijo muçarela, frango, bacon, cebolas e orégano.",
+                ingredients: ["Molho de tomate", "Queijo muçarela", "Frango", "Bacon", "Cebola", "Orégano"],
+                options: pizzaEspecial()
+            },
+            {
+                name: "Cabôco's",
+                desc: "Molho de tomate, queijo qualho, carne de sol na nata, tomate, cebolas e orégano.",
+                ingredients: ["Molho de tomate", "Queijo qualho", "Carne de sol", "Nata", "Tomate", "Cebola", "Orégano"],
+                options: pizzaEspecial()
+            },
+            {
+                name: "Arretada",
+                desc: "Molho de tomate, queijo muçarela, filé mignon, cebolas e orégano.",
+                ingredients: ["Molho de tomate", "Queijo muçarela", "Filé mignon", "Cebola", "Orégano"],
+                options: pizzaEspecial()
+            },
+            {
+                name: "Agreste",
+                desc: "Molho de tomate, queijo muçarela, lombo canadense, cebolas e orégano.",
+                ingredients: ["Molho de tomate", "Queijo muçarela", "Lombo canadense", "Cebola", "Orégano"],
+                options: pizzaEspecial()
+            },
+            {
+                name: "Arerê",
+                desc: "Molho de tomate, queijo muçarela, carne suína desfiada no barbecue, cebolas, tomate e orégano.",
+                ingredients: ["Molho de tomate", "Queijo muçarela", "Carne suína", "Cebola", "Tomate", "Orégano"],
+                options: pizzaEspecial()
+            },
+            {
+                name: "Mandacaru",
+                desc: "Molho de tomate, queijo qualho, costela bovina desfiada, cebolas, tomate e orégano.",
+                ingredients: ["Molho de tomate", "Queijo qualho", "Costela bovina", "Cebola", "Tomate", "Orégano"],
+                options: pizzaEspecial()
+            },
         ],
     },
     {
         category: "Pizzas doces",
         items: [
-            { name: "Xique-Xique", desc: "Chocolate e morango.", options: pizzaEspecial() },
-            { name: "Romeu & Julieta", desc: "Queijo muçarela e goiabada.", options: pizzaEspecial() },
-            { name: "M&M", desc: "Chocolate e M&M.", options: pizzaEspecial() },
-            { name: "Banana Nervada", desc: "Banana cortada em rodelas, chocolate branco gratinado e canela em pó.", options: pizzaEspecial() },
-            { name: "Dois Amores", desc: "Chocolate e chocolate branco.", options: pizzaEspecial() },
-            { name: "Trio Nordestino", desc: "Queijo qualho, doce de leite e goiabada.", options: pizzaEspecial() },
+            {
+                name: "Xique-Xique",
+                desc: "Chocolate e morango.",
+                ingredients: ["Chocolate", "Morango"],
+                options: pizzaEspecial()
+            },
+            {
+                name: "Romeu & Julieta",
+                desc: "Queijo muçarela e goiabada.",
+                ingredients: ["Queijo muçarela", "Goiabada"],
+                options: pizzaEspecial()
+            },
+            {
+                name: "M&M",
+                desc: "Chocolate e M&M.",
+                ingredients: ["Chocolate", "M&M"],
+                options: pizzaEspecial()
+            },
+            {
+                name: "Banana Nervada",
+                desc: "Banana cortada em rodelas, chocolate branco gratinado e canela em pó.",
+                ingredients: ["Banana", "Chocolate branco", "Canela"],
+                options: pizzaEspecial()
+            },
+            {
+                name: "Dois Amores",
+                desc: "Chocolate e chocolate branco.",
+                ingredients: ["Chocolate", "Chocolate branco"],
+                options: pizzaEspecial()
+            },
+            {
+                name: "Trio Nordestino",
+                desc: "Queijo qualho, doce de leite e goiabada.",
+                ingredients: ["Queijo qualho", "Doce de leite", "Goiabada"],
+                options: pizzaEspecial()
+            },
         ],
     },
     {
         category: "Pastéis salgados",
         items: [
-            { name: "Cabocos", desc: "Carne de sol, queijo muçarela, presunto, cebola, tomate e requeijão.", options: pastelCabocos() },
-            { name: "Arretado", desc: "Carne de sol, cebola, tomate e requeijão.", options: pastelPadrao() },
-            { name: "Magão", desc: "Frango, cebola, tomate e requeijão.", options: pastelPadrao() },
-            { name: "Pizza", desc: "Queijo muçarela, presunto, requeijão, molho de tomate, cebola, tomate e orégano.", options: pastelPadrao() },
-            { name: "Sertanejo", desc: "Carne de sol e queijo qualho.", options: pastelPadrao() },
-            { name: "Calabresa à moda da casa", desc: "Calabresa acebolada e requeijão.", options: pastelPadrao() },
-            { name: "Curisco", desc: "Carne de sol na nata, queijo qualho, cebola e tomate.", options: pastelPadrao() },
-            { name: "Matuto", desc: "Costela bovina desfiada, queijo qualho, cebola e tomate.", options: pastelPadrao() },
-            { name: "Candieiro", desc: "Carne suína desfiada no barbecue, requeijão, cebola e tomate.", options: pastelPadrao() },
+            {
+                name: "Cabocos",
+                desc: "Carne de sol, queijo muçarela, presunto, cebola, tomate e requeijão.",
+                ingredients: ["Carne de sol", "Queijo muçarela", "Presunto", "Cebola", "Tomate", "Requeijão"],
+                options: pastelCabocos()
+            },
+            {
+                name: "Arretado",
+                desc: "Carne de sol, cebola, tomate e requeijão.",
+                ingredients: ["Carne de sol", "Cebola", "Tomate", "Requeijão"],
+                options: pastelPadrao()
+            },
+            {
+                name: "Magão",
+                desc: "Frango, cebola, tomate e requeijão.",
+                ingredients: ["Frango", "Cebola", "Tomate", "Requeijão"],
+                options: pastelPadrao()
+            },
+            {
+                name: "Pizza",
+                desc: "Queijo muçarela, presunto, requeijão, molho de tomate, cebola, tomate e orégano.",
+                ingredients: ["Queijo muçarela", "Presunto", "Requeijão", "Molho de tomate", "Cebola", "Tomate", "Orégano"],
+                options: pastelPadrao()
+            },
+            {
+                name: "Sertanejo",
+                desc: "Carne de sol e queijo qualho.",
+                ingredients: ["Carne de sol", "Queijo qualho"],
+                options: pastelPadrao()
+            },
+            {
+                name: "Calabresa à moda da casa",
+                desc: "Calabresa acebolada e requeijão.",
+                ingredients: ["Calabresa", "Cebola", "Requeijão"],
+                options: pastelPadrao()
+            },
+            {
+                name: "Curisco",
+                desc: "Carne de sol na nata, queijo qualho, cebola e tomate.",
+                ingredients: ["Carne de sol", "Nata", "Queijo qualho", "Cebola", "Tomate"],
+                options: pastelPadrao()
+            },
+            {
+                name: "Matuto",
+                desc: "Costela bovina desfiada, queijo qualho, cebola e tomate.",
+                ingredients: ["Costela bovina", "Queijo qualho", "Cebola", "Tomate"],
+                options: pastelPadrao()
+            },
+            {
+                name: "Candieiro",
+                desc: "Carne suína desfiada no barbecue, requeijão, cebola e tomate.",
+                ingredients: ["Carne suína", "Requeijão", "Cebola", "Tomate"],
+                options: pastelPadrao()
+            },
         ],
     },
     {
         category: "Pastéis doces",
         items: [
-            { name: "Lampião & Maria Bonita", desc: "Doce de leite e goiabada.", options: pastelPadrao() },
-            { name: "Cuó", desc: "Chocolate e morango.", options: pastelPadrao() },
-            { name: "Trairi", desc: "Chocolate e Kit Kat.", options: pastelPadrao() },
-            { name: "Caiçara", desc: "Queijo qualho, doce de leite e goiabada.", options: pastelPadrao() },
-            { name: "Marmeleiro", desc: "Queijo muçarela e goiabada.", options: pastelPadrao() },
-            { name: "Mulungu", desc: "Chocolate branco, banana e canela em pó.", options: pastelPadrao() },
-            { name: "Macambira", desc: "Chocolate e M&M.", options: pastelPadrao() },
+            {
+                name: "Lampião & Maria Bonita",
+                desc: "Doce de leite e goiabada.",
+                ingredients: ["Doce de leite", "Goiabada"],
+                options: pastelPadrao()
+            },
+            {
+                name: "Cuó",
+                desc: "Chocolate e morango.",
+                ingredients: ["Chocolate", "Morango"],
+                options: pastelPadrao()
+            },
+            {
+                name: "Trairi",
+                desc: "Chocolate e Kit Kat.",
+                ingredients: ["Chocolate", "Kit Kat"],
+                options: pastelPadrao()
+            },
+            {
+                name: "Caiçara",
+                desc: "Queijo qualho, doce de leite e goiabada.",
+                ingredients: ["Queijo qualho", "Doce de leite", "Goiabada"],
+                options: pastelPadrao()
+            },
+            {
+                name: "Marmeleiro",
+                desc: "Queijo muçarela e goiabada.",
+                ingredients: ["Queijo muçarela", "Goiabada"],
+                options: pastelPadrao()
+            },
+            {
+                name: "Mulungu",
+                desc: "Chocolate branco, banana e canela em pó.",
+                ingredients: ["Chocolate branco", "Banana", "Canela"],
+                options: pastelPadrao()
+            },
+            {
+                name: "Macambira",
+                desc: "Chocolate e M&M.",
+                ingredients: ["Chocolate", "M&M"],
+                options: pastelPadrao()
+            },
         ],
     },
 ];
@@ -160,6 +402,49 @@ function formatPrice(value) {
     return Number(value || 0).toFixed(2).replace(".", ",");
 }
 
+function normalizeText(value) {
+    return String(value || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+}
+
+function getUnavailableIngredientNames() {
+    return unavailableIngredients.map(item => item.nome);
+}
+
+function getUnavailableIngredientsForProduct(product) {
+    const unavailableNames = getUnavailableIngredientNames();
+
+    return (product.ingredients || []).filter(ingredient =>
+        unavailableNames.includes(ingredient)
+    );
+}
+
+function isProductAvailable(product) {
+    return getUnavailableIngredientsForProduct(product).length === 0;
+}
+
+function getUnavailableIngredientsForEdge(edgeName) {
+    const edge = EDGES.find(item => item.name === edgeName);
+
+    if (!edge) {
+        return [];
+    }
+
+    const unavailableNames = getUnavailableIngredientNames();
+
+    return edge.ingredients.filter(ingredient =>
+        unavailableNames.includes(ingredient)
+    );
+}
+
+function isEdgeAvailable(edgeName) {
+    return getUnavailableIngredientsForEdge(edgeName).length === 0;
+}
+
 function isPizzaCategory(category) {
     return category.toLowerCase().includes("pizza");
 }
@@ -171,21 +456,31 @@ function getAllPizzaFlavors() {
             section.items.map(item => ({
                 name: item.name,
                 category: section.category,
+                ingredients: item.ingredients || [],
                 options: item.options,
             }))
         );
 }
 
+function getPizzaFlavorByName(flavorName) {
+    return getAllPizzaFlavors().find(item => item.name === flavorName);
+}
+
 function getPizzaPriceBySize(flavorName, size) {
-    const flavor = getAllPizzaFlavors().find(item => item.name === flavorName);
-    if (!flavor) return 0;
+    const flavor = getPizzaFlavorByName(flavorName);
+
+    if (!flavor) {
+        return 0;
+    }
 
     const option = flavor.options.find(opt => opt.label === size);
+
     return option ? option.price : 0;
 }
 
 function getEdgePrice(edgeName) {
     const edge = EDGES.find(item => item.name === edgeName);
+
     return edge ? edge.price : 0;
 }
 
@@ -207,6 +502,19 @@ function getPromotionPizzaGCount() {
 
 function calculateTotal() {
     return cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+}
+
+function listenUnavailableIngredients() {
+    onSnapshot(collection(db, "ingredientesIndisponiveis"), snapshot => {
+        unavailableIngredients = snapshot.docs.map(document => ({
+            id: document.id,
+            ...document.data(),
+        }));
+
+        renderMenu();
+    }, error => {
+        console.error("Erro ao carregar ingredientes indisponíveis:", error);
+    });
 }
 
 function renderCategories() {
@@ -285,33 +593,74 @@ function renderMenu() {
         <button class="back-btn" onclick="goBackMenu()">← Voltar</button>
         <h2 class="category-title">${section.category}</h2>
 
-        ${section.items.map(item => `
-            <article class="card">
-                <h3>${item.name}</h3>
-                <p>${item.desc}</p>
-
-                <div class="options">
-                    ${
-                        isPizzaCategory(section.category)
-                            ? `<button onclick="openPizzaModal('${item.name}')">
-                                Escolher ${item.name}
-                            </button>`
-                            : item.options.map(option => `
-                                <button onclick="addToCart({
-                                    type: 'normal',
-                                    category: '${section.category}',
-                                    name: '${item.name}',
-                                    size: '${option.label}',
-                                    price: ${option.price}
-                                })">
-                                    ${option.label} - R$ ${formatPrice(option.price)}
-                                </button>
-                            `).join("")
-                    }
-                </div>
-            </article>
-        `).join("")}
+        ${section.items.map(item => renderProductCard(section, item)).join("")}
     `;
+}
+
+function renderProductCard(section, item) {
+    const available = isProductAvailable(item);
+    const unavailableItems = getUnavailableIngredientsForProduct(item);
+
+    return `
+        <article class="card ${available ? "" : "unavailable-card"}">
+            <h3>${item.name}</h3>
+            <p>${item.desc}</p>
+
+            ${available
+            ? ""
+            : `<p class="unavailable-message">
+                        Indisponível no momento.
+                        <br>
+                        Ingrediente indisponível: ${unavailableItems.join(", ")}
+                    </p>`
+        }
+
+            <div class="options">
+                ${isPizzaCategory(section.category)
+            ? renderPizzaButton(item, available)
+            : renderNormalProductButtons(section, item, available)
+        }
+            </div>
+        </article>
+    `;
+}
+
+function renderPizzaButton(item, available) {
+    if (!available) {
+        return `
+            <button type="button" disabled class="disabled-btn">
+                Indisponível
+            </button>
+        `;
+    }
+
+    return `
+        <button type="button" onclick="openPizzaModal('${item.name}')">
+            Escolher ${item.name}
+        </button>
+    `;
+}
+
+function renderNormalProductButtons(section, item, available) {
+    if (!available) {
+        return `
+            <button type="button" disabled class="disabled-btn">
+                Indisponível
+            </button>
+        `;
+    }
+
+    return item.options.map(option => `
+        <button onclick="addToCart({
+            type: 'normal',
+            category: '${section.category}',
+            name: '${item.name}',
+            size: '${option.label}',
+            price: ${option.price}
+        })">
+            ${option.label} - R$ ${formatPrice(option.price)}
+        </button>
+    `).join("");
 }
 
 function selectMainCategory(name) {
@@ -458,6 +807,13 @@ function closeCart() {
 }
 
 function openPizzaModal(selectedFlavor) {
+    const selectedPizzaFlavor = getPizzaFlavorByName(selectedFlavor);
+
+    if (!selectedPizzaFlavor || !isProductAvailable(selectedPizzaFlavor)) {
+        alert("Esse sabor está indisponível no momento.");
+        return;
+    }
+
     currentPizza = { selectedFlavor };
 
     const pizzaSize = document.getElementById("pizzaSize");
@@ -465,7 +821,7 @@ function openPizzaModal(selectedFlavor) {
     const pizzaFlavor2 = document.getElementById("pizzaFlavor2");
     const pizzaEdge = document.getElementById("pizzaEdge");
 
-    const allFlavors = getAllPizzaFlavors();
+    const allFlavors = getAllPizzaFlavors().filter(flavor => isProductAvailable(flavor));
 
     pizzaSize.innerHTML = `
         <option value="P">P</option>
@@ -488,7 +844,9 @@ function openPizzaModal(selectedFlavor) {
         `).join("")}
     `;
 
-    pizzaEdge.innerHTML = EDGES.map(edge => `
+    const availableEdges = EDGES.filter(edge => isEdgeAvailable(edge.name));
+
+    pizzaEdge.innerHTML = availableEdges.map(edge => `
         <option value="${edge.name}">
             ${edge.name}${edge.price > 0 ? ` + R$ ${formatPrice(edge.price)}` : ""}
         </option>
@@ -512,6 +870,24 @@ function updatePizzaPreview() {
     const flavor1 = document.getElementById("pizzaFlavor1").value;
     const flavor2 = document.getElementById("pizzaFlavor2").value;
     const edge = document.getElementById("pizzaEdge").value;
+
+    const flavorOneData = getPizzaFlavorByName(flavor1);
+    const flavorTwoData = flavor2 ? getPizzaFlavorByName(flavor2) : null;
+
+    if (!flavorOneData || !isProductAvailable(flavorOneData)) {
+        document.getElementById("pizzaPreview").innerHTML = "Sabor indisponível.";
+        return;
+    }
+
+    if (flavorTwoData && !isProductAvailable(flavorTwoData)) {
+        document.getElementById("pizzaPreview").innerHTML = "Segundo sabor indisponível.";
+        return;
+    }
+
+    if (!isEdgeAvailable(edge)) {
+        document.getElementById("pizzaPreview").innerHTML = "Borda indisponível.";
+        return;
+    }
 
     const price1 = getPizzaPriceBySize(flavor1, size);
     const price2 = flavor2 ? getPizzaPriceBySize(flavor2, size) : 0;
@@ -542,6 +918,24 @@ function confirmPizza() {
     const flavor1 = document.getElementById("pizzaFlavor1").value;
     const flavor2 = document.getElementById("pizzaFlavor2").value;
     const edge = document.getElementById("pizzaEdge").value;
+
+    const flavorOneData = getPizzaFlavorByName(flavor1);
+    const flavorTwoData = flavor2 ? getPizzaFlavorByName(flavor2) : null;
+
+    if (!flavorOneData || !isProductAvailable(flavorOneData)) {
+        alert("O sabor escolhido está indisponível no momento.");
+        return;
+    }
+
+    if (flavorTwoData && !isProductAvailable(flavorTwoData)) {
+        alert("O segundo sabor escolhido está indisponível no momento.");
+        return;
+    }
+
+    if (!isEdgeAvailable(edge)) {
+        alert("A borda escolhida está indisponível no momento.");
+        return;
+    }
 
     if (flavor2 && flavor1 === flavor2) {
         alert("Escolha sabores diferentes ou deixe como somente um sabor.");
@@ -713,3 +1107,4 @@ window.confirmPizza = confirmPizza;
 renderCategories();
 renderMenu();
 updateCart();
+listenUnavailableIngredients();

@@ -445,3 +445,26 @@ textarea {
         padding-inline: 40px;
     }
 }
+
+.unavailable-card {
+    opacity: 0.72;
+    border-color: #e74c3c;
+}
+
+.unavailable-message {
+    color: #ff8a8a;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+.disabled-btn {
+    opacity: 0.7;
+    cursor: not-allowed;
+    border-color: #e74c3c;
+    color: #ff8a8a;
+}
+
+.disabled-btn:hover {
+    background: transparent;
+    color: #ff8a8a;
+}
