@@ -7,6 +7,8 @@ import {
     query,
     doc,
     updateDoc,
+    setDoc,
+    deleteDoc,
     signInWithEmailAndPassword,
     signOut,
     onAuthStateChanged
@@ -15,6 +17,47 @@ import {
 let allOrders = [];
 let currentFilter = "TODOS";
 let unsubscribeOrders = null;
+let unsubscribeStock = null;
+let unavailableIngredients = [];
+
+const ingredientsList = [
+    "Molho de tomate",
+    "Queijo muçarela",
+    "Queijo qualho",
+    "Calabresa",
+    "Carne de sol",
+    "Frango",
+    "Presunto",
+    "Ovo",
+    "Tomate",
+    "Cebola",
+    "Orégano",
+    "Manjericão",
+    "Bacon",
+    "Pimentão",
+    "Filé mignon",
+    "Lombo canadense",
+    "Carne suína",
+    "Costela bovina",
+    "Chocolate",
+    "Chocolate branco",
+    "Morango",
+    "Goiabada",
+    "Banana",
+    "Canela",
+    "Doce de leite",
+    "M&M",
+    "Kit Kat",
+    "Batata",
+    "Macaxeira",
+    "Arroz",
+    "Feijão",
+    "Farofa",
+    "Vinagrete",
+    "Nata",
+    "Requeijão",
+    "Cheddar"
+];
 
 const loginScreen = document.getElementById("loginScreen");
 const adminPanel = document.getElementById("adminPanel");
@@ -38,6 +81,15 @@ function formatDate(dateValue) {
         hour: "2-digit",
         minute: "2-digit",
     });
+}
+
+function normalizeText(value) {
+    return String(value || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
 }
 
 function statusLabel(status) {
@@ -64,12 +116,18 @@ function showLogin() {
         unsubscribeOrders();
         unsubscribeOrders = null;
     }
+
+    if (unsubscribeStock) {
+        unsubscribeStock();
+        unsubscribeStock = null;
+    }
 }
 
 function showAdmin() {
     loginScreen.classList.add("hidden");
     adminPanel.classList.remove("hidden");
     listenOrders();
+    listenStock();
 }
 
 loginForm.addEventListener("submit", async function (event) {
@@ -275,6 +333,81 @@ function listenOrders() {
     });
 }
 
+function renderStock() {
+    const container = document.getElementById("ingredientsStock");
+    const stockInfo = document.getElementById("stockInfo");
+
+    if (!container || !stockInfo) {
+        return;
+    }
+
+    stockInfo.textContent = `${unavailableIngredients.length} ingrediente(s) indisponível(is).`;
+
+    container.innerHTML = ingredientsList.map(ingredient => {
+        const id = normalizeText(ingredient);
+        const isUnavailable = unavailableIngredients.some(item => item.id === id);
+
+        return `
+            <label class="ingredient-item ${isUnavailable ? "unavailable" : ""}">
+                <input
+                    type="checkbox"
+                    ${isUnavailable ? "checked" : ""}
+                    onchange="toggleIngredientAvailability('${id}', '${ingredient}', this.checked)"
+                >
+
+                <span>
+                    ${ingredient}
+                </span>
+
+                <small>
+                    ${isUnavailable ? "Indisponível" : "Disponível"}
+                </small>
+            </label>
+        `;
+    }).join("");
+}
+
+function listenStock() {
+    if (unsubscribeStock) {
+        return;
+    }
+
+    unsubscribeStock = onSnapshot(collection(db, "ingredientesIndisponiveis"), snapshot => {
+        unavailableIngredients = snapshot.docs.map(document => ({
+            id: document.id,
+            ...document.data(),
+        }));
+
+        renderStock();
+    }, error => {
+        console.error("Erro ao carregar estoque:", error);
+
+        document.getElementById("stockInfo").textContent = "Erro ao carregar estoque.";
+        document.getElementById("ingredientsStock").innerHTML = `
+            <p class="empty-message">
+                Erro ao carregar ingredientes.
+            </p>
+        `;
+    });
+}
+
+async function toggleIngredientAvailability(id, name, isUnavailable) {
+    try {
+        if (isUnavailable) {
+            await setDoc(doc(db, "ingredientesIndisponiveis", id), {
+                nome: name,
+                indisponivel: true,
+                atualizadoEm: new Date().toISOString(),
+            });
+        } else {
+            await deleteDoc(doc(db, "ingredientesIndisponiveis", id));
+        }
+    } catch (error) {
+        console.error("Erro ao atualizar ingrediente:", error);
+        alert("Erro ao atualizar estoque.");
+    }
+}
+
 function filterStatus(status) {
     currentFilter = status;
 
@@ -339,3 +472,4 @@ window.filterStatus = filterStatus;
 window.updateOrderStatus = updateOrderStatus;
 window.printOrder = printOrder;
 window.logoutAdmin = logoutAdmin;
+window.toggleIngredientAvailability = toggleIngredientAvailability;

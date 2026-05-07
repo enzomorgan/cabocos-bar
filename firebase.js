@@ -9,7 +9,9 @@ import {
     orderBy,
     query,
     doc,
-    updateDoc
+    updateDoc,
+    setDoc,
+    deleteDoc
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
 import {
@@ -44,6 +46,8 @@ export {
     query,
     doc,
     updateDoc,
+    setDoc,
+    deleteDoc,
     signInWithEmailAndPassword,
     signOut,
     onAuthStateChanged

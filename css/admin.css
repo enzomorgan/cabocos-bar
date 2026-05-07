@@ -196,6 +196,94 @@ body {
     font-size: 26px;
 }
 
+/* ESTOQUE */
+
+.stock-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 18px;
+    margin-bottom: 22px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.30);
+}
+
+.stock-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.stock-header h2 {
+    color: var(--yellow);
+    font-size: 24px;
+    margin-bottom: 6px;
+}
+
+.stock-header p {
+    color: var(--muted);
+    line-height: 1.4;
+}
+
+.stock-info {
+    flex: 0 0 auto;
+    background: var(--bg-deep);
+    border: 1px solid var(--border-soft);
+    color: var(--yellow);
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.ingredients-stock {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+.ingredient-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg-card-soft);
+    border: 1px solid var(--border-soft);
+    border-radius: 14px;
+    padding: 12px;
+    cursor: pointer;
+}
+
+.ingredient-item input {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--red);
+    cursor: pointer;
+}
+
+.ingredient-item span {
+    color: var(--white);
+    font-weight: bold;
+}
+
+.ingredient-item small {
+    color: var(--green);
+    font-weight: bold;
+}
+
+.ingredient-item.unavailable {
+    border-color: rgba(231, 76, 60, 0.8);
+    background: rgba(231, 76, 60, 0.12);
+}
+
+.ingredient-item.unavailable small {
+    color: var(--red);
+}
+
+/* PEDIDOS */
+
 .filters {
     display: flex;
     gap: 10px;
@@ -425,6 +513,8 @@ body {
     color: #ffffff;
 }
 
+/* RESPONSIVO */
+
 @media (max-width: 600px) {
     .admin-header {
         align-items: flex-start;
@@ -442,11 +532,24 @@ body {
         width: 100%;
         text-align: center;
     }
+
+    .stock-header {
+        flex-direction: column;
+    }
+
+    .stock-info {
+        width: 100%;
+        text-align: center;
+    }
 }
 
 @media (min-width: 700px) {
     .summary {
         grid-template-columns: repeat(3, 1fr);
+    }
+
+    .ingredients-stock {
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .orders {
@@ -459,6 +562,14 @@ body {
     }
 }
 
+@media (min-width: 1050px) {
+    .ingredients-stock {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* IMPRESSÃO */
+
 @media print {
     body {
         background: #ffffff;
@@ -467,6 +578,7 @@ body {
 
     .admin-header,
     .summary,
+    .stock-panel,
     .filters,
     .orders-header,
     .order-actions {
