@@ -176,6 +176,52 @@ function renderSummary(orders) {
     document.getElementById("totalSold").textContent = `R$ ${formatPrice(totalSold)}`;
 }
 
+function isToday(dateValue) {
+    if (!dateValue) return false;
+
+    const date = new Date(dateValue);
+    const today = new Date();
+
+    return (
+        date.getDate() === today.getDate() &&
+        date.getMonth() === today.getMonth() &&
+        date.getFullYear() === today.getFullYear()
+    );
+}
+
+function renderDailyDashboard(orders) {
+    const todayOrders = orders.filter(order =>
+        isToday(order.criadoEm) && order.status !== "CANCELADO"
+    );
+
+    const totalToday = todayOrders.reduce((sum, order) => {
+        return sum + Number(order.total || 0);
+    }, 0);
+
+    const averageTicket = todayOrders.length > 0
+        ? totalToday / todayOrders.length
+        : 0;
+
+    const pixTotal = todayOrders
+        .filter(order => order.pagamento === "Pix")
+        .reduce((sum, order) => sum + Number(order.total || 0), 0);
+
+    const cardTotal = todayOrders
+        .filter(order => order.pagamento === "Cartão")
+        .reduce((sum, order) => sum + Number(order.total || 0), 0);
+
+    const cashTotal = todayOrders
+        .filter(order => order.pagamento === "Dinheiro")
+        .reduce((sum, order) => sum + Number(order.total || 0), 0);
+
+    document.getElementById("todayOrders").textContent = todayOrders.length;
+    document.getElementById("todaySold").textContent = `R$ ${formatPrice(totalToday)}`;
+    document.getElementById("averageTicket").textContent = `R$ ${formatPrice(averageTicket)}`;
+    document.getElementById("pixTotal").textContent = `R$ ${formatPrice(pixTotal)}`;
+    document.getElementById("cardTotal").textContent = `R$ ${formatPrice(cardTotal)}`;
+    document.getElementById("cashTotal").textContent = `R$ ${formatPrice(cashTotal)}`;
+}
+
 function getFilteredOrders() {
     if (currentFilter === "TODOS") {
         return allOrders;
@@ -191,6 +237,7 @@ function renderOrders() {
     const filteredOrders = getFilteredOrders();
 
     renderSummary(allOrders);
+    renderDailyDashboard(allOrders);
 
     if (filteredOrders.length === 0) {
         ordersInfo.textContent = "Nenhum pedido encontrado para este filtro.";

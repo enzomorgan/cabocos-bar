@@ -6,36 +6,30 @@
         <title>Painel Administrativo - Cabocos Bar</title>
         <link rel="stylesheet" href="css/admin.css">
     </head>
-
     <body>
         <!-- TELA DE LOGIN -->
         <section id="loginScreen" class="login-screen">
             <form id="loginForm" class="login-card">
                 <h1>Cabocos Bar</h1>
                 <p>Painel Administrativo</p>
-
                 <input
                     type="email"
                     id="adminEmail"
                     placeholder="E-mail"
                     required
                 >
-
                 <input
                     type="password"
                     id="adminPassword"
                     placeholder="Senha"
                     required
                 >
-
                 <button type="submit">
                     Entrar
                 </button>
-
                 <span id="loginError" class="login-error"></span>
             </form>
         </section>
-
         <!-- PAINEL ADMIN -->
         <section id="adminPanel" class="admin-panel hidden">
             <header class="admin-header">
@@ -43,36 +37,66 @@
                     <h1>Cabocos Bar</h1>
                     <p>Painel Administrativo de Pedidos</p>
                 </div>
-
                 <div class="admin-header-actions">
                     <a href="index.html" class="back-site-btn">
                         Ver cardápio
                     </a>
-
                     <button type="button" class="logout-btn" onclick="logoutAdmin()">
                         Sair
                     </button>
                 </div>
             </header>
-
             <main class="admin-container">
                 <section class="summary">
                     <div class="summary-card">
                         <span>Total de pedidos</span>
                         <strong id="totalOrders">0</strong>
                     </div>
-
                     <div class="summary-card">
                         <span>Pedidos novos</span>
                         <strong id="newOrders">0</strong>
                     </div>
-
                     <div class="summary-card">
                         <span>Total vendido</span>
                         <strong id="totalSold">R$ 0,00</strong>
                     </div>
                 </section>
-
+                <section class="daily-dashboard">
+                    <div class="dashboard-header">
+                        <div>
+                            <h2>Resumo financeiro de hoje</h2>
+                            <p>Acompanhe os pedidos e vendas do dia atual.</p>
+                        </div>
+                    </div>
+                    <div class="daily-cards">
+                        <div class="daily-card">
+                            <span>Pedidos hoje</span>
+                            <strong id="todayOrders">0</strong>
+                        </div>
+                        <div class="daily-card">
+                            <span>Vendido hoje</span>
+                            <strong id="todaySold">R$ 0,00</strong>
+                        </div>
+                        <div class="daily-card">
+                            <span>Ticket médio</span>
+                            <strong id="averageTicket">R$ 0,00</strong>
+                        </div>
+                    </div>
+                    <div class="payment-summary">
+                        <div class="payment-card">
+                            <span>Pix</span>
+                            <strong id="pixTotal">R$ 0,00</strong>
+                        </div>
+                        <div class="payment-card">
+                            <span>Cartão</span>
+                            <strong id="cardTotal">R$ 0,00</strong>
+                        </div>
+                        <div class="payment-card">
+                            <span>Dinheiro</span>
+                            <strong id="cashTotal">R$ 0,00</strong>
+                        </div>
+                    </div>
+                </section>
                 <!-- CONTROLE DE ESTOQUE -->
                 <section class="stock-panel">
                     <div class="stock-header">
@@ -80,56 +104,44 @@
                             <h2>Controle de estoque</h2>
                             <p>Marque os ingredientes que estão indisponíveis no momento.</p>
                         </div>
-
                         <span id="stockInfo" class="stock-info">
                             Carregando estoque...
                         </span>
                     </div>
-
                     <div id="ingredientsStock" class="ingredients-stock">
                         <p class="empty-message">Carregando ingredientes...</p>
                     </div>
                 </section>
-
                 <section class="filters">
                     <button type="button" onclick="filterStatus('TODOS')" class="active">
                         Todos
                     </button>
-
                     <button type="button" onclick="filterStatus('NOVO')">
                         Novos
                     </button>
-
                     <button type="button" onclick="filterStatus('PREPARO')">
                         Em preparo
                     </button>
-
                     <button type="button" onclick="filterStatus('ENTREGA')">
                         Saiu para entrega
                     </button>
-
                     <button type="button" onclick="filterStatus('FINALIZADO')">
                         Finalizados
                     </button>
-
                     <button type="button" onclick="filterStatus('CANCELADO')">
                         Cancelados
                     </button>
                 </section>
-
                 <section class="orders-header">
                     <h2>Pedidos recebidos</h2>
                     <p id="ordersInfo">Carregando pedidos...</p>
                 </section>
-
                 <section id="orders" class="orders">
                     <p class="empty-message">Carregando pedidos...</p>
                 </section>
             </main>
         </section>
-
         <section id="printArea" class="print-area"></section>
-
         <script type="module" src="admin.js"></script>
     </body>
 </html>
