@@ -629,15 +629,15 @@ body {
 }
 
 .receipt {
-    width: 100%;
-    max-width: 320px;
+    width: 80mm;
+    max-width: 80mm;
     margin: 0 auto;
     background: #ffffff;
     color: #000000;
     font-family: Arial, sans-serif;
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1.35;
-    padding: 10px;
+    padding: 8px;
 }
 
 .receipt-header {
@@ -648,24 +648,33 @@ body {
 }
 
 .receipt-header h1 {
-    font-size: 22px;
+    font-size: 20px;
     margin-bottom: 2px;
     text-transform: uppercase;
 }
 
 .receipt-header p {
-    margin-bottom: 6px;
+    margin-bottom: 4px;
+}
+
+.receipt-header strong {
+    display: block;
+    font-size: 12px;
 }
 
 .receipt-section {
     border-bottom: 1px dashed #000000;
-    padding: 8px 0;
+    padding: 7px 0;
 }
 
 .receipt-section h2 {
-    font-size: 16px;
+    font-size: 14px;
     margin-bottom: 6px;
     text-transform: uppercase;
+}
+
+.receipt-section p {
+    margin-bottom: 2px;
 }
 
 .receipt-item {
@@ -679,12 +688,16 @@ body {
 
 .receipt-item strong {
     display: block;
-    font-size: 14px;
+    font-size: 13px;
     margin-bottom: 3px;
 }
 
+.receipt-item p {
+    margin-bottom: 2px;
+}
+
 .receipt-total {
-    font-size: 18px;
+    font-size: 17px;
     font-weight: bold;
     text-align: center;
     padding: 10px 0;
@@ -693,12 +706,18 @@ body {
 
 .receipt-footer {
     text-align: center;
-    font-size: 11px;
+    font-size: 10px;
     padding-top: 8px;
 }
 
 @media print {
+
+    html,
     body {
+        width: 80mm;
+        min-height: auto;
+        margin: 0;
+        padding: 0;
         background: #ffffff;
         color: #000000;
     }
@@ -710,21 +729,27 @@ body {
 
     .print-area {
         display: block;
+        width: 80mm;
+        margin: 0;
+        padding: 0;
     }
 
     .receipt,
     .receipt * {
         color: #000000 !important;
         background: #ffffff !important;
+        box-shadow: none !important;
     }
 
     .receipt {
-        max-width: 320px;
-        margin: 0 auto;
-        box-shadow: none;
+        width: 80mm;
+        max-width: 80mm;
+        margin: 0;
+        padding: 6mm 4mm;
     }
 
     @page {
-        margin: 8mm;
+        size: 80mm auto;
+        margin: 0;
     }
 }
