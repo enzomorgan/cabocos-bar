@@ -221,16 +221,14 @@ function renderOrders() {
                 <p><strong>Cliente:</strong> ${order.cliente || "Não informado"}</p>
                 <p><strong>Endereço:</strong> ${order.endereco || "Não informado"}</p>
                 <p><strong>Pagamento:</strong> ${order.pagamento || "Não informado"}</p>
-                ${
-                    order.observacoes
-                        ? `<p><strong>Observações:</strong> ${order.observacoes}</p>`
-                        : ""
-                }
-                ${
-                    order.promocao
-                        ? `<p><strong>Promoção:</strong> ${order.promocao.quantidade} refrigerante(s) grátis - ${order.promocao.bebida}</p>`
-                        : ""
-                }
+                ${order.observacoes
+            ? `<p><strong>Observações:</strong> ${order.observacoes}</p>`
+            : ""
+        }
+                ${order.promocao
+            ? `<p><strong>Promoção:</strong> ${order.promocao.quantidade} refrigerante(s) grátis - ${order.promocao.bebida}</p>`
+            : ""
+        }
             </div>
 
             <div class="order-items">
@@ -276,11 +274,10 @@ function renderOrderItems(items) {
                 <li>
                     <strong>${item.qty || 1}x ${item.name}</strong><br>
                     Tamanho: ${item.size}<br>
-                    ${
-                        item.flavor2
-                            ? `Sabores: metade ${item.flavor1} / metade ${item.flavor2}<br>`
-                            : `Sabor: ${item.flavor1}<br>`
-                    }
+                    ${item.flavor2
+                    ? `Sabores: metade ${item.flavor1} / metade ${item.flavor2}<br>`
+                    : `Sabor: ${item.flavor1}<br>`
+                }
                     Borda: ${item.edge || "Sem borda"}<br>
                     Valor unitário: R$ ${formatPrice(item.price)}<br>
                     Subtotal: R$ ${formatPrice((item.price || 0) * (item.qty || 1))}
@@ -449,23 +446,116 @@ async function updateOrderStatus(orderId) {
 }
 
 function printOrder(orderId) {
-    document.querySelectorAll(".order-card").forEach(card => {
-        card.classList.remove("printing");
-    });
+    const order = allOrders.find(item => item.id === orderId);
 
-    const orderCard = document.getElementById(`order-${orderId}`);
-
-    if (!orderCard) {
-        alert("Pedido não encontrado para impressão.");
+    if (!order) {
+        alert("Pedido não encontrado para impressão");
         return;
     }
 
-    orderCard.classList.add("printing");
+    const printArea = document.getElementById("printArea");
+
+    if ("!printArea") {
+        alert("Área de impressão não encontrada");
+    }
+
+    printArea.innerHTML = buildPrintReceipt(order);
+
     window.print();
 
     setTimeout(() => {
-        orderCard.classList.remove("printing");
+        printArea.innerHTML = "";
     }, 500);
+}
+
+function buildPrintReceipt(order) {
+    return `
+        <div class="receipt">
+            <div class="receipt-header">
+            <h1>Cabocos Bar</h1>
+            <p>Pizzaria & Pastelaria</p>
+            <strong>COMANDA DE PEDIDO</strong>
+        </div>
+
+        <div class="receipt-section">
+            <p><strong>Pedido:</strong> #${order.shortId}</p>
+            <p><strong>Data:</strong> ${formatDate(order.criadoEm)}</p>
+            <p><strong>Status:</strong> ${statusLabel(order.status)}</p>
+        </div>
+
+        <div class="receipt-section">
+            <p><strong>Cliente:</strong> ${order.cliente || "Não informado"}</p>
+            <p><strong>Endereço:</strong> ${order.endereco || "Não informado"}</p>
+            <p><strong>Pagamento:</strong> ${order.pagamento || "Não informado"}</p>
+        </div>
+
+        ${order.observacoes
+            ? `
+                    <div class="receipt-section">
+                        <strong>Observações:</strong>
+                        <p>${order.observacoes}</p>
+                    </div>
+                `
+            : ""
+        }
+        ${order.promocao
+            ? `
+                        <div class="receipt-section">
+                            <strong>Promoção:</strong>
+                            <p>${order.promocao.quantidade} refrigerante(s) grátis</p>
+                            <p>Bebida: ${order.promocao.bebida}</p>
+                        </div>
+                    `
+            : ""
+        }
+
+            <div class="receipt-section">
+                <h2>Itens</h2>
+                ${buildPrintItems(order.itens || [])}
+            </div>
+
+            <div class="receipt-total">
+                TOTAL: R$ ${formatPrice(order.total)}
+            </div>
+
+            <div class="receipt-footer">
+                <p>Impresso em ${formatDate(new Date().toISOString())}</p>
+            </div>
+        </div>
+    `;
+}
+
+function buildPrintItems(items) {
+    if (!items.length) {
+        return `<p>Nenhum item informado.</p>`;
+    }
+
+    return items.map(item => {
+        if (item.type === "pizza") {
+            return `
+                <div class="receipt-item">
+                    <strong>${item.qty || 1}x ${item.name}</strong>
+                    <p>Tamanho: ${item.size}</p>
+                    ${item.flavor2
+                    ? `<p>Sabores: metade ${item.flavor1} / metade ${item.flavor2}</p>`
+                    : `<p>Sabor: ${item.flavor1}</p>`
+                }
+                    <p>Borda: ${item.edge || "Sem borda"}</p>
+                    <p>Unitário: R$ ${formatPrice(item.price)}</p>
+                    <p>Subtotal: R$ ${formatPrice((item.price || 0) * (item.qty || 1))}</p>
+                </div>
+            `;
+        }
+
+        return `
+            <div class="receipt-item">
+                <strong>${item.qty || 1}x ${item.name}</strong>
+                <p>${item.category || ""} ${item.size ? `| ${item.size}` : ""}</p>
+                <p>Unitário: R$ ${formatPrice(item.price)}</p>
+                <p>Subtotal: R$ ${formatPrice((item.price || 0) * (item.qty || 1))}</p>
+            </div>
+        `;
+    }).join("");
 }
 
 window.filterStatus = filterStatus;

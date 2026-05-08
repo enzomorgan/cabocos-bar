@@ -621,3 +621,110 @@ body {
         color: #000000 !important;
     }
 }
+
+/* COMANDA DE IMPRESSÃO */
+
+.print-area {
+    display: none;
+}
+
+.receipt {
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    background: #ffffff;
+    color: #000000;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.35;
+    padding: 10px;
+}
+
+.receipt-header {
+    text-align: center;
+    border-bottom: 1px dashed #000000;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+}
+
+.receipt-header h1 {
+    font-size: 22px;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+}
+
+.receipt-header p {
+    margin-bottom: 6px;
+}
+
+.receipt-section {
+    border-bottom: 1px dashed #000000;
+    padding: 8px 0;
+}
+
+.receipt-section h2 {
+    font-size: 16px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+
+.receipt-item {
+    padding: 7px 0;
+    border-bottom: 1px dotted #777777;
+}
+
+.receipt-item:last-child {
+    border-bottom: none;
+}
+
+.receipt-item strong {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 3px;
+}
+
+.receipt-total {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px 0;
+    border-bottom: 1px dashed #000000;
+}
+
+.receipt-footer {
+    text-align: center;
+    font-size: 11px;
+    padding-top: 8px;
+}
+
+@media print {
+    body {
+        background: #ffffff;
+        color: #000000;
+    }
+
+    .login-screen,
+    .admin-panel {
+        display: none !important;
+    }
+
+    .print-area {
+        display: block;
+    }
+
+    .receipt,
+    .receipt * {
+        color: #000000 !important;
+        background: #ffffff !important;
+    }
+
+    .receipt {
+        max-width: 320px;
+        margin: 0 auto;
+        box-shadow: none;
+    }
+
+    @page {
+        margin: 8mm;
+    }
+}
