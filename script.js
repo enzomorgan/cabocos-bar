@@ -488,6 +488,26 @@ function isThursday() {
     return new Date().getDay() === 4;
 }
 
+function isRestaurantOpen() {
+    const now = new Date();
+
+    const day = now.getDay();
+    const hour = now.getHours();
+    const minutes = now.getMinutes();
+
+    const isAllowedDay = day === 0 || day === 4 || day === 5 || day === 6;
+
+    const currentMinutes = hour * 60 + minutes;
+    const openingMinutes = 18 * 60;
+    const closingMinutes = 23 * 60;
+
+    return isAllowedDay && currentMinutes >= openingMinutes && currentMinutes <=closingMinutes;
+}
+
+function getClosedMessage() {
+    return "No momento estamos fechados. Funcionamos de quinta a domingo, das 18h às 23h."
+}
+
 function getPromotionPizzaGCount() {
     if (!isThursday()) return 0;
 
@@ -1060,6 +1080,11 @@ document.getElementById("paymentMethod").addEventListener("change", function () 
 document.getElementById("reservationForm").addEventListener("submit", async function (event) {
     event.preventDefault();
 
+    if (!isRestaurantOpen()) {
+        alert(getClosedMessage());
+        return;
+    }
+
     const name = document.getElementById("reservationName").value.trim();
     const phone = document.getElementById("reservationPhone").value.trim();
     const date = document.getElementById("reservationDate").value;
@@ -1104,6 +1129,11 @@ document.getElementById("reservationForm").addEventListener("submit", async func
 
 document.getElementById("orderForm").addEventListener("submit", async function (event) {
     event.preventDefault();
+
+    if (!isRestaurantOpen()) {
+        alert(getClosedMessage());
+        return;
+    }
 
     if (cart.length === 0) {
         alert("Adicione pelo menos um item ao carrinho.");
