@@ -20,7 +20,7 @@ let currentFilter = "TODOS";
 let unsubscribeOrders = null;
 let unsubscribeStock = null;
 let unsubscribeReservations = null;
-let unavailableInfredients = [];
+let unavailableIngredients = [];
 
 const ingredientsList = [
     "Molho de tomate",
@@ -495,7 +495,7 @@ function renderReservations() {
     const container = document.getElementById("reservationsList");
     const info = document.getElementById("reservationsInfo");
 
-    if (!container || info) {
+    if (!container || !info) {
         return;
     }
 
@@ -510,7 +510,7 @@ function renderReservations() {
     }
 
     const pendingReservations = allReservations.filter(reservation =>
-        reservation.length === "NOVA"
+        reservation.status === "NOVA"
     ).length;
 
     info.textContent = `${allReservations.length} reserva(s), ${pendingReservations} nova(s).`;
@@ -646,6 +646,7 @@ function printOrder(orderId) {
 
     if ("!printArea") {
         alert("Área de impressão não encontrada");
+        return;
     }
 
     printArea.innerHTML = buildPrintReceipt(order);
