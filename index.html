@@ -23,15 +23,21 @@
         <section class="hero">
             <h2>Cardápio Online</h2>
             <p>Escolha seus itens e finalize seu pedido online</p>
+
             <p class="promo-text">
                 Quinta-feira: comprando uma pizza G, ganha 1 refrigerante de 1L: Guaraná ou Pepsi.
             </p>
+
+            <button type="button" class="reservation-open-btn" onclick="openReservationModal()">
+                Reserve sua mesa para eventos
+            </button>
         </section>
 
         <nav id="categories" class="categories"></nav>
 
         <main id="menu" class="menu"></main>
 
+        <!-- MODAL DO CARRINHO -->
         <aside id="cartModal" class="cart-modal">
             <div class="cart-content">
                 <button class="close" onclick="closeCart()">×</button>
@@ -85,6 +91,7 @@
             </div>
         </aside>
 
+        <!-- MODAL DA PIZZA -->
         <aside id="pizzaModal" class="cart-modal">
             <div class="cart-content">
                 <button class="close" onclick="closePizzaModal()">×</button>
@@ -112,6 +119,72 @@
                         Adicionar ao carrinho
                     </button>
                 </div>
+            </div>
+        </aside>
+
+        <!-- MODAL DA RESERVA -->
+        <aside id="reservationModal" class="cart-modal">
+            <div class="cart-content">
+                <button class="close" onclick="closeReservationModal()">×</button>
+
+                <h2>Reservar mesa</h2>
+
+                <p class="reservation-info">
+                    Preencha os dados abaixo para solicitar uma reserva para aniversário ou evento.
+                </p>
+
+                <form id="reservationForm">
+                    <input
+                        type="text"
+                        id="reservationName"
+                        placeholder="Seu nome"
+                        required
+                    >
+
+                    <input
+                        type="tel"
+                        id="reservationPhone"
+                        placeholder="Telefone/WhatsApp"
+                        required
+                    >
+
+                    <input
+                        type="date"
+                        id="reservationDate"
+                        required
+                    >
+
+                    <input
+                        type="time"
+                        id="reservationTime"
+                        required
+                    >
+
+                    <input
+                        type="number"
+                        id="reservationPeople"
+                        placeholder="Quantidade de pessoas"
+                        min="1"
+                        required
+                    >
+
+                    <select id="reservationType" required>
+                        <option value="">Tipo de reserva</option>
+                        <option value="Aniversário">Aniversário</option>
+                        <option value="Evento">Evento</option>
+                        <option value="Confraternização">Confraternização</option>
+                        <option value="Outro">Outro</option>
+                    </select>
+
+                    <textarea
+                        id="reservationObs"
+                        placeholder="Observações sobre a reserva"
+                    ></textarea>
+
+                    <button type="submit" class="send-btn">
+                        Solicitar reserva
+                    </button>
+                </form>
             </div>
         </aside>
 

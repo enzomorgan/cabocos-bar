@@ -968,6 +968,34 @@ function confirmPizza() {
     closePizzaModal();
 }
 
+function openReservationModal() {
+    document.getElementById("reservationModal").classList.add("show");
+}
+
+function closeReservationModal() {
+    document.getElementById("reservationModal").classList.remove("show");
+}
+
+function builReservationWhatsAppMessage(reservationData) {
+    let messafe = `*📅 Nova solicitação de Reserva - Cabocos Bar*\n\n`;
+    message += `👤 *Nome:* ${reservationData.nome}\n`;
+    message += `📱 *Telefone:* ${reservationData.telefone}\n`;
+    message += `📆 *Data:* ${reservationData.data}\n`;
+    message += `⏰ *Horário:* ${reservationData.horario}\n`;
+    message += `👥 *Pessoas:* ${reservationData.pessoas}\n`;
+    message += `🎉 *Tipo:* ${reservationData.tipo}\n`;
+
+    if (reservationData.observacoes) {
+        message += `📝 *Observações:* ${reservationData.observacoes}\n`;
+    }
+
+    message += `\nAguardando confirmação da reserva.`;
+
+    return message;
+}
+
+
+
 function buildWhatsAppMessage(orderData) {
     const itemsText = orderData.itens.map(item => {
         if (item.type === "pizza") {
@@ -1026,6 +1054,51 @@ document.getElementById("paymentMethod").addEventListener("change", function () 
         pixBox.classList.add("hidden");
         pixProof.removeAttribute("required");
         pixProof.value = "";
+    }
+});
+
+document.getElementById("reservationForm").addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const name = document.getElementById("reservationName").value.trim();
+    const phone = document.getElementById("reservationPhone").value.trim();
+    const date = document.getElementById("reservationDate").value;
+    const time = document.getElementById("reservationTime").value;
+    const people = Number (document.getElementById("reservationPeople").value);
+    const type = document.getElementById("reservationType").value;
+    const obs = document.getElementById("reservationOBS").value.trim();
+
+    if (!name || !phone || !date || !time || !people || !type) {
+        alert("Preencha todos os campos obrigatórios da reserva.");
+        return;
+    }
+
+    const reservationData = {
+        nome: name,
+        telefone: phone,
+        data: date,
+        horario: time,
+        tipo: type,
+        observacoes: obs,
+        status: "NOVA",
+        criadoEm: new Date().toISOString(),
+    };
+
+    try {
+        await addDoc(collection(db, "reservas"), reservationData);
+        
+        const message = buildReservationWhatsAppMessage(reservationData);
+        const encodeMessage = encodeURIComponent(message);
+
+        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeMessage}`, "_blank");
+
+        alert("Solicitação de reserva enviada com sucesso! Continue pelo WhatsApp para confirmar.");
+
+        document.getElementById("reservationForm").reset();
+        closeReservationModal();
+    } catch (error) {
+        contole.error("Erro ao salvar reserva.", error);
+        alert("Erro ao solicitar reserva. Tente novamente.");
     }
 });
 
@@ -1102,7 +1175,8 @@ window.openCart = openCart;
 window.closeCart = closeCart;
 window.openPizzaModal = openPizzaModal;
 window.closePizzaModal = closePizzaModal;
-window.confirmPizza = confirmPizza;
+window.openReservationModal = openReservationModal;
+window.closeReservationModal = closeReservationModal;
 
 renderCategories();
 renderMenu();

@@ -15,10 +15,12 @@ import {
 } from "./firebase.js";
 
 let allOrders = [];
+let allReservations = [];
 let currentFilter = "TODOS";
 let unsubscribeOrders = null;
 let unsubscribeStock = null;
-let unavailableIngredients = [];
+let unsubscribeReservations = null;
+let unavailableInfredients = [];
 
 const ingredientsList = [
     "Molho de tomate",
@@ -121,6 +123,11 @@ function showLogin() {
         unsubscribeStock();
         unsubscribeStock = null;
     }
+
+    if (unsubscribeReservations) {
+        unsubscribeReservations();
+        unsubscribeReservations = null;
+    }
 }
 
 function showAdmin() {
@@ -128,6 +135,7 @@ function showAdmin() {
     adminPanel.classList.remove("hidden");
     listenOrders();
     listenStock();
+    listenReservations();
 }
 
 loginForm.addEventListener("submit", async function (event) {
@@ -435,6 +443,140 @@ function listenStock() {
     });
 }
 
+function reservationStatusLabel(status) {
+    const labels = {
+        NOVA: "Nova",
+        CONFIRMADA: "Confirmada",
+        CANCELADA: "Cancelada",
+    };
+
+    return labels[status] || status || "Nova";
+}
+
+function reservationStatusClass(status) {
+    return String(status || "NOVA").toLowerCase();
+}
+
+function listenReservations() {
+    if (unsubscribeReservations) {
+        return;
+    }
+
+    const reservationsQuery = query(
+        collection(db, "reservas"),
+        orderBy("criadoEm", "desc")
+    );
+
+    unsubscribeReservations = onSnapshot(reservationsQuery, snapShot => {
+        allReservations = snapShot.docs.map(document => {
+            const data = document.data();
+
+            return {
+                id: document.id,
+                shortId: document.id.slice(0, 6).toLowerCase(),
+                ...data,
+            };
+        });
+
+        renderReservations();
+    }, error => {
+        console.error("Erro ao carregar reservar", error);
+
+        document.getElementById("reservationsInfo").textContent = "Erro ao carregar reservas";
+        document.getElementById("reservationsList").innerHTML = `
+            <p class="empty-message">
+                Erro ao carregar reservas. Verifique o console.
+            </p>
+        `;
+    });
+}
+
+function renderReservations() {
+    const container = document.getElementById("reservationsList");
+    const info = document.getElementById("reservationsInfo");
+
+    if (!container || info) {
+        return;
+    }
+
+    if (allReservations.length === 0) {
+        info.textContent = "Nenhuma reserva encontrada";
+        container.innerHTML = `
+            <p class="empty-message">
+                Nenhuma reserva solicitada até o momento.
+            </p>
+        `;
+        return;
+    }
+
+    const pendingReservations = allReservations.filter(reservation =>
+        reservation.length === "NOVA"
+    ).length;
+
+    info.textContent = `${allReservations.length} reserva(s), ${pendingReservations} nova(s).`;
+
+    container.innerHTML = allReservations.map(reservation => `
+        <article class="reservation-card ${reservationStatusClass(reservation.status)}">
+            <div class="reservation-top">
+                <div>
+                    <h3>Reserva #${reservation.shortId}</h3>
+                    <p>${formatDate(reservation.criadoEm)}</p>
+                </div>
+
+                <span class="reservation-badge ${reservationStatusClass(reservation.status)}">
+                    ${reservationStatusLabel(reservation.status)}
+                </span>
+            </div>
+
+            <div class="reservation-info-box">
+                <p><strong>Nome:</strong> ${reservation.nome || "Não informado"}</p>
+                <p><strong>Telefone:</strong> ${reservation.telefone || "Não informado"}</p>
+                <p><strong>Data:</strong> ${reservation.data || "Não informada"}</p>
+                <p><strong>Horário:</strong> ${reservation.horario || "Não informado"}</p>
+                <p><strong>Pessoas:</strong> ${reservation.pessoas || "Não informado"}</p>
+                <p><strong>Tipo:</strong> ${reservation.tipo || "Não informado"}</p>
+                ${reservation.observacoes
+            ? `<p><strong>Observações:</strong> ${reservation.observacoes}</p>`
+            : ""
+        }
+            </div>
+
+            <div class="reservation-actions">
+                <select id="reservation-status-${reservation.id}">
+                    <option value="NOVA" ${reservation.status === "NOVA" ? "selected" : ""}>Nova</option>
+                    <option value="CONFIRMADA" ${reservation.status === "CONFIRMADA" ? "selected" : ""}>Confirmada</option>
+                    <option value="CANCELADA" ${reservation.status === "CANCELADA" ? "selected" : ""}>Cancelada</option>
+                </select>
+
+                <button type="button" class="save-btn" onclick="updateReservationStatus('${reservation.id}')">
+                    Salvar status
+                </button>
+            </div>
+        </article>
+    `).join("");
+}
+
+async function updateReservationStatus(reservationId) {
+    const select = document.getElementById(`reservation-status-${reservationId}`);
+
+    if (!select) {
+        alert("Status da reserva não encontrado.");
+        return;
+    }
+
+    try {
+        await updateDoc(doc(db, "reservas", reservationId), {
+            status: select.value,
+            atualizadoEm: new Date().toISOString(),
+        });
+
+        alert("Status da reserva atualizado com sucesso!");
+    } catch (error) {
+        console.error("Erro ao atualizar reserva:", error);
+        alert("Erro ao atualizar reserva.");
+    }
+}
+
 async function toggleIngredientAvailability(id, name, isUnavailable) {
     try {
         if (isUnavailable) {
@@ -610,3 +752,4 @@ window.updateOrderStatus = updateOrderStatus;
 window.printOrder = printOrder;
 window.logoutAdmin = logoutAdmin;
 window.toggleIngredientAvailability = toggleIngredientAvailability;
+window.updateReservationStatus = updateReservationStatus;
