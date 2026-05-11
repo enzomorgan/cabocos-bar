@@ -654,11 +654,11 @@ function renderPizzaButton(item, available) {
         `;
     }
 
-    return `
-        <button type="button" onclick="openPizzaModal('${item.name}')">
-            Escolher ${item.name}
+    return item.options.map(option => `
+        <button type="button" onclick="openPizzaModal('${item.name}', '${option.label}')">
+            ${option.label} - R$ ${formatPrice(option.price)}
         </button>
-    `;
+    `).join("");
 }
 
 function renderNormalProductButtons(section, item, available) {
@@ -826,7 +826,7 @@ function closeCart() {
     document.getElementById("cartModal").classList.remove("show");
 }
 
-function openPizzaModal(selectedFlavor) {
+function openPizzaModal(selectedFlavor, selectedSize = "P") {
     const selectedPizzaFlavor = getPizzaFlavorByName(selectedFlavor);
 
     if (!selectedPizzaFlavor || !isProductAvailable(selectedPizzaFlavor)) {
@@ -844,9 +844,9 @@ function openPizzaModal(selectedFlavor) {
     const allFlavors = getAllPizzaFlavors().filter(flavor => isProductAvailable(flavor));
 
     pizzaSize.innerHTML = `
-        <option value="P">P</option>
-        <option value="M">M</option>
-        <option value="G">G</option>
+        <option value="P" ${selectedSize === "P" ? "selected" : ""}>P</option>
+        <option value="M" ${selectedSize === "M" ? "selected" : ""}>M</option>
+        <option value="G" ${selectedSize === "G" ? "selected" : ""}>G</option>
     `;
 
     pizzaFlavor1.innerHTML = allFlavors.map(flavor => `
