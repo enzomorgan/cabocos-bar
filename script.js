@@ -735,7 +735,7 @@ function isRestaurantOpen() {
     const openingMinutes = 18 * 60;
     const closingMinutes = 23 * 60;
 
-    return isAllowedDay && currentMinutes >= openingMinutes && currentMinutes <=closingMinutes;
+    return isAllowedDay && currentMinutes >= openingMinutes && currentMinutes <= closingMinutes;
 }
 
 function getClosedMessage() {
@@ -944,6 +944,11 @@ function goBackMenu() {
 }
 
 function addToCart(product) {
+    if (!isRestaurantOpen()) {
+        alert(getClosedMessage());
+        return;
+    }
+    
     const key = product.key || `${product.type}-${product.name}-${product.size}-${product.price}`;
     const existing = cart.find(item => item.key === key);
 
@@ -977,7 +982,19 @@ function updateCart() {
         return;
     }
 
-    cartItems.innerHTML = cart.map((item, index) => `
+    const cartButtons = `
+        <div class="cart-next-actions">
+            <button type="button" class="continue-btn" onClick="continueShopping()">
+                Adicionar mais produtos
+            </button>
+
+            <button type="button" class="finish-btn" onClick="goToCheckout()">
+                Finalizar pedido
+            </button>
+        </div>
+    `;
+
+    cartItems.innerHTML = cartButtons + cart.map((item, index) => `
         <div class="cart-item">
             <strong>${item.name}</strong>
             <p>${getItemDetails(item)}</p>
@@ -1052,7 +1069,34 @@ function removeItem(index) {
     updateCart();
 }
 
+function continueShopping() {
+    closeCart();
+
+    setTimeout(() => {
+        window.scrollTo({
+            top: document.getElementById("categories").offsetTop,
+            behavior: "smooth"
+        });
+    }, 200);
+}
+
+function goToCheckout() {
+    const orderForm = document.getElementById("orderForm");
+
+    if (orderForm) {
+        orderForm.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    }
+}
+
 function openCart() {
+    if (!isRestaurantOpen()) {
+        alert(getClosedMessage());
+        return;
+    }
+
     document.getElementById("cartModal").classList.add("show");
 }
 
@@ -1061,6 +1105,11 @@ function closeCart() {
 }
 
 function openPizzaModal(selectedFlavor, selectedSize = "P") {
+    if (!isRestaurantOpen()) {
+        alert(getClosedMessage());
+        return;
+    }
+
     const selectedPizzaFlavor = getPizzaFlavorByName(selectedFlavor);
 
     if (!selectedPizzaFlavor || !isProductAvailable(selectedPizzaFlavor)) {
@@ -1441,6 +1490,8 @@ window.openPizzaModal = openPizzaModal;
 window.closePizzaModal = closePizzaModal;
 window.openReservationModal = openReservationModal;
 window.closeReservationModal = closeReservationModal;
+window.continueShopping = continueShopping;
+window.goToCheckout = goToCheckout;
 
 renderCategories();
 renderMenu();

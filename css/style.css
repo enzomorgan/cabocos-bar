@@ -539,3 +539,40 @@ textarea {
         grid-template-columns: repeat(3, 1fr);
     }
 }
+
+/* AÇÕES DO CARRINHO */
+
+.cart-next-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin: 14px 0;
+    padding: 12px;
+    background: var(--bg-section);
+    border: 1px solid var(--border-soft);
+    border-radius: 14px;
+}
+
+.cart-next-actions button {
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.continue-btn {
+    background: var(--yellow);
+    color: #000000;
+}
+
+.finish-btn {
+    background: var(--green);
+    color: #000000;
+}
+
+@media (min-width: 500px) {
+    .cart-next-actions {
+        grid-template-columns: 1fr 1fr;
+    }
+}
