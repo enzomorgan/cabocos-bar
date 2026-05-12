@@ -62,7 +62,7 @@ const menu = [
             {
                 name: "Coca-Cola Tradicional",
                 desc: "Refrigerante Coca-Cola.",
-                options: [{ label: "350mç", price: 6 }]
+                options: [{ label: "350ml", price: 6 }]
             },
             {
                 name: "Coca-Cola Zero",
