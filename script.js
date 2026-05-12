@@ -102,7 +102,7 @@ const menu = [
         ],
     },
     {
-        category: "Refrigerante 1L",
+        category: "Refrigerantes 1L",
         items: [
             {
                 name: "Coca-Cola Tradicional",
