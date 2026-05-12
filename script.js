@@ -87,12 +87,12 @@ const menu = [
             {
                 name: "Fanta Laranja",
                 desc: "Regrigerante de Laranja",
-                [{ label: "350ml", price: 6}]
+                options: [{ label: "350ml", price: 6}]
             },
             {
                 mame: "Fanta Uva",
                 desc: "Refrigetante de Uva",
-                [{ label: "350ml", price: 6}]
+                options: [{ label: "350ml", price: 6}]
             },
             {
                 name: "Fys Limão",
@@ -585,7 +585,7 @@ const mainCategories = [
     {
     name: "Bebidas",
     description: "Refrigerantes, águas e outras bebidas.",
-    sections: ["Refrigerantes Lata, Regrigerantes 1L, Bebidas Sem Álcool, Cachaça, Vinhos, Cervejas 600ml, Cervejas Long Neck"],
+    sections: ["Refrigerantes Lata, Regrigerantes 1L, Bebidas Sem álcool, Cachaça, Vinhos, Cervejas 600ml, Cervejas Long Neck"],
     },
 ];
 
