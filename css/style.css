@@ -513,3 +513,29 @@ textarea {
         padding: 14px;
     }
 }
+
+/* MELHORIA DOS BOTÕES DE OPÇÕES */
+
+.options {
+    grid-template-columns: 1fr;
+}
+
+.options button {
+    transition: 0.2s ease;
+}
+
+.options button:active {
+    transform: scale(0.98);
+}
+
+@media (min-width: 500px) {
+    .options {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 900px) {
+    .options {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}

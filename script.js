@@ -57,6 +57,226 @@ const menu = [
         ],
     },
     {
+        category: "Refrigerantes Lata",
+        items: [
+            {
+                name: "Coca-Cola Tradicional",
+                desc: "Refrigerante Coca-Cola.",
+                options: [{ label: "350mç", price: 6 }]
+            },
+            {
+                name: "Coca-Cola Zero",
+                desc: "Refrigerante Coca-Cola Zero",
+                options: [{ label: "350ml", price: 6}]
+            },
+            {
+                name: "Pepsi",
+                desc: "Refrigerante Pepsi",
+                options: [{ label: "350ml", price: 6 }]
+            },
+            {
+                name: "Guaraná",
+                desc: "Refrigerante Guaraná",
+                options: [{ label: "350ml", price: 6}]
+            },
+            {
+                name: "Cajuína",
+                desc: "Refrigerante Cajuína",
+                options: [{ label: "350ml", price: 6}]
+            },
+            {
+                name: "Fanta Laranja",
+                desc: "Regrigerante de Laranja",
+                [{ label: "350ml", price: 6}]
+            },
+            {
+                mame: "Fanta Uva",
+                desc: "Refrigetante de Uva",
+                [{ label: "350ml", price: 6}]
+            },
+            {
+                name: "Fys Limão",
+                desc: "Refrigerante de Limão",
+                options: [{ label: "350ml", price: 6}]
+            },
+        ],
+    },
+    {
+        category: "Refrigerante 1L",
+        items: [
+            {
+                name: "Coca-Cola Tradicional",
+                desc: "Refrigerante Coca-Cola Tradicional",
+                options: [{ label: "1L", price: 10}]
+            },
+            {
+                name: "Coca-Cola Zero",
+                desc: "Refrigerante Coca-Cola Zero",
+                options: [{ label: "1L", price: 10}]
+            },
+            {
+                name: "Guaraná",
+                desc: "Refrigerante Guaraná",
+                options: [{ label: "1L", price: 10}]
+            },
+            {
+                name: "Pepsi",
+                desc: "Refrigerante Pepsi",
+                options: [{ label: "1L", price: 10}]
+            },
+            {
+                name: "Cajuína",
+                desc: "Refrigerante Cajuína",
+                options: [{ label: "1L", price: 10}]
+            },
+        ],
+    },
+    {
+        catergory: "Bebidas sem álcool",
+        items: [
+            {
+                name: "Água sem gás",
+                desc: "Água mineral sem gás",
+                options: [{ label: "250ml", price: 3}]
+            },
+            {
+                name: "Água com gás",
+                desc: "Água mineral com gás",
+                options: [{ label: "250ml", price: 4}]
+            },
+            {
+                name: "H2O",
+                desc: "H2O Limoneto",
+                options: [{ label: "500ml", price: 8}]
+            },
+            {
+                name: "Red Bull",
+                desc: "Energético",
+                options: [{ label: "250ml", price: 12}]
+            },
+        ],
+    },
+    {
+        category: "Cachaça",
+        items: [
+            {
+                name: "Ypioca",
+                desc: "Cachaça ypioca lata",
+                options: [{ label: "350ml", price: 12}]
+            },
+            {
+                name: "Pitú",
+                desc: "Cachaça pitú lata",
+                options: [{ label: "350ml", price: 12}]
+            },
+            {
+                name: "Carangueijo Prata",
+                desc: "Cachaça carangueijo prata lata",
+                options: [{ label: "350ml", price: 12}]
+            },
+            {
+                name: "Carangueijo Ouro",
+                desc: "Cachaça carangueijo ouro lata",
+                options: [{ label: "350ml", price: 12}]
+            },
+            {
+                name: "Matuta Prata",
+                desc: "Cachaça matuta prata",
+                options: [{ label: "275ml", price: 18}]
+            },
+            {
+                name: "Matuta Umburana",
+                desc: "Cachaça matuta umburana",
+                options: [{ label: "275ml", price: 20}]
+            },
+            {
+                name: "Samanaú Prata",
+                desc: "Cachaça samanaú prata",
+                options: [{ label: "500ml", price: 22}]
+            },
+            {
+                name: "Samanaú Ouro",
+                desc: "Cachaça samanaú ouro",
+                options: [{ label: "500ml", price: 22}]
+            },
+            {
+                name: "Mipibu Ouro",
+                desc: "Cachaça mipibu ouro",
+                options: [{ label: "500ml", price: 22}]
+            },
+            {
+                name: "Do Vale Carvalho",
+                desc: "Cachaça do vale carvalho",
+                options: [{ label: "1L", price: 20}]
+            },
+            {
+                name: "Extrema",
+                desc: "Cachaça extrema",
+                options: [{ label: "500ml", price: 20}]
+            },
+        ],
+    },
+    {
+        category: "Vinhos",
+        items: [
+            {
+                name: "Del Grano Tinto Suave",
+                desc: "Vinho tinto suave",
+                options: [{ label: "1L", price: 55}]
+            },
+            {
+                name: "Pergola Tinto Suave",
+                desc: "Vinho tinto suave",
+                options: [{ label: "1L", price: 50}]
+            },
+            {
+                name: "Canciller Rosé",
+                desc: "Vinho rosé",
+                options: [{ label: "1L", price: 60}]
+            },
+            {
+                name: "Del Grano Tinto Seco",
+                desc: "Vinho tinto seco",
+                options: [{ label: "1L", price: 55}]
+            },
+        ],
+    },
+    {
+        category: "Cervejas 600ml",
+        items: [
+            {
+                name: "Baden Baden",
+                desc: "Cerveja Baden Baden",
+                options: [{ label: "600ml", price: 15}]
+            },
+        ],
+    },
+    {
+        category: "Cervejas Long Neck",
+        items: [
+            {
+                name: "Lagunitas Ipa",
+                desc: "Long Neck lagunitas ipa",
+                options: [{ label: "330ml", price: 15}]
+            },
+            {
+                name: "Heineken",
+                desc: "Long Neck heineken",
+                options: [{ label: "330ml", price: 10}]
+            },
+            {
+                name: "Heineken Zero",
+                desc: "Long Neck heineken zero",
+                options: [{ label: "330ml", price: 10}]
+            },
+            {
+                name: "Blue Moon",
+                desc: "Long Neck bluee moon",
+                options: [{ label: "330ml", price: 15}]
+            },
+        ],
+    },
+    {
         category: "Para beliscar",
         items: [
             {
@@ -360,6 +580,12 @@ const mainCategories = [
         name: "Para encher o bucho",
         description: "Pratos maiores da casa.",
         sections: ["Para encher o bucho"],
+    },
+
+    {
+    name: "Bebidas",
+    description: "Refrigerantes, águas e outras bebidas.",
+    sections: ["Refrigerantes Lata, Regrigerantes 1L, Bebidas Sem Álcool, Cachaça, Vinhos, Cervejas 600ml, Cervejas Long Neck"],
     },
 ];
 
