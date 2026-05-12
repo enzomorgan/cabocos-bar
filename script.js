@@ -587,7 +587,7 @@ const mainCategories = [
     description: "Refrigerantes, águas e outras bebidas.",
     sections: [
             "Refrigerantes Lata", 
-            "Regrigerantes 1L", 
+            "Refrigerantes 1L", 
             "Bebidas sem álcool", 
             "Cachaça", 
             "Vinhos", 
