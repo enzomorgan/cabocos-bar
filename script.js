@@ -90,7 +90,7 @@ const menu = [
                 options: [{ label: "350ml", price: 6}]
             },
             {
-                mame: "Fanta Uva",
+                name: "Fanta Uva",
                 desc: "Refrigetante de Uva",
                 options: [{ label: "350ml", price: 6}]
             },
@@ -585,7 +585,15 @@ const mainCategories = [
     {
     name: "Bebidas",
     description: "Refrigerantes, águas e outras bebidas.",
-    sections: ["Refrigerantes Lata, Regrigerantes 1L, Bebidas Sem álcool, Cachaça, Vinhos, Cervejas 600ml, Cervejas Long Neck"],
+    sections: [
+            "Refrigerantes Lata", 
+            "Regrigerantes 1L", 
+            "Bebidas sem álcool", 
+            "Cachaça", 
+            "Vinhos", 
+            "Cervejas 600ml", 
+            "Cervejas Long Neck"
+        ],
     },
 ];
 
