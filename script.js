@@ -1217,6 +1217,11 @@ function updatePizzaPreview() {
 }
 
 function confirmPizza() {
+    if (!isRestaurantOpen()) {
+        alert(getClosedMessage());
+        return;
+    }
+
     const size = document.getElementById("pizzaSize").value;
     const flavor1 = document.getElementById("pizzaFlavor1").value;
     const flavor2 = document.getElementById("pizzaFlavor2").value;
@@ -1268,7 +1273,35 @@ function confirmPizza() {
         key: `pizza-${size}-${flavor1}-${flavor2 || "inteira"}-${edge}`,
     });
 
+    addToCart(pizzaItem);
     closePizzaModal();
+
+    if (size === "G" && isThursday()) {
+        setTimeout(() => {
+            showPromotionChoice();
+        }, 300);
+    }
+}
+
+function showPromotionChoice() {
+    const promoBox = document.getElementById("promoBox");
+
+    if (!promoBox) {
+        return;
+    }
+
+    promoBox.classList.remove("hidden");
+    promoBox.innerHTML = `
+        <strong>Promoção de quinta-feira</strong>
+        <p>Você ganhou 1 refrigerante de 1L.</p>
+        <label>Escolha o refrigerante grátis:</label>
+        <select id="promoDrink">
+            <option value="Guaraná 1L">Guaraná 1L</option>
+            <option value="Pepsi 1L">Pepsi 1L</option>
+        </select>
+    `;
+
+    openCart();
 }
 
 function openReservationModal() {
@@ -1492,6 +1525,7 @@ window.openReservationModal = openReservationModal;
 window.closeReservationModal = closeReservationModal;
 window.continueShopping = continueShopping;
 window.goToCheckout = goToCheckout;
+window.confirmPizza = confirmPizza;
 
 renderCategories();
 renderMenu();
