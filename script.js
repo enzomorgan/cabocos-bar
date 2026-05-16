@@ -67,7 +67,7 @@ const menu = [
             {
                 name: "Coca-Cola Zero",
                 desc: "Refrigerante Coca-Cola Zero",
-                options: [{ label: "350ml", price: 6}]
+                options: [{ label: "350ml", price: 6 }]
             },
             {
                 name: "Pepsi",
@@ -77,27 +77,27 @@ const menu = [
             {
                 name: "Guaraná",
                 desc: "Refrigerante Guaraná",
-                options: [{ label: "350ml", price: 6}]
+                options: [{ label: "350ml", price: 6 }]
             },
             {
                 name: "Cajuína",
                 desc: "Refrigerante Cajuína",
-                options: [{ label: "350ml", price: 6}]
+                options: [{ label: "350ml", price: 6 }]
             },
             {
                 name: "Fanta Laranja",
                 desc: "Regrigerante de Laranja",
-                options: [{ label: "350ml", price: 6}]
+                options: [{ label: "350ml", price: 6 }]
             },
             {
                 name: "Fanta Uva",
                 desc: "Refrigetante de Uva",
-                options: [{ label: "350ml", price: 6}]
+                options: [{ label: "350ml", price: 6 }]
             },
             {
                 name: "Fys Limão",
                 desc: "Refrigerante de Limão",
-                options: [{ label: "350ml", price: 6}]
+                options: [{ label: "350ml", price: 6 }]
             },
         ],
     },
@@ -583,15 +583,15 @@ const mainCategories = [
     },
 
     {
-    name: "Bebidas",
-    description: "Refrigerantes, águas e outras bebidas.",
-    sections: [
-            "Refrigerantes Lata", 
-            "Refrigerantes 1L", 
-            "Bebidas sem álcool", 
-            "Cachaça", 
-            "Vinhos", 
-            "Cervejas 600ml", 
+        name: "Bebidas",
+        description: "Refrigerantes, águas e outras bebidas.",
+        sections: [
+            "Refrigerantes Lata",
+            "Refrigerantes 1L",
+            "Bebidas sem álcool",
+            "Cachaça",
+            "Vinhos",
+            "Cervejas 600ml",
             "Cervejas Long Neck"
         ],
     },
@@ -948,7 +948,7 @@ function addToCart(product) {
         alert(getClosedMessage());
         return;
     }
-    
+
     const key = product.key || `${product.type}-${product.name}-${product.size}-${product.price}`;
     const existing = cart.find(item => item.key === key);
 
@@ -1015,14 +1015,14 @@ function updateCart() {
         if (promoQty > 0) {
             promoBox.classList.remove("hidden");
             promoBox.innerHTML = `
-                <strong>Promoção de quinta-feira</strong>
-                <p>Você ganhou ${promoQty} refrigerante(s) de 1L.</p>
-                <label>Escolha o refrigerante:</label>
-                <select id="promoDrink">
-                    <option value="Guaraná 1L">Guaraná 1L</option>
-                    <option value="Pepsi 1L">Pepsi 1L</option>
-                </select>
-            `;
+            <strong>Promoção de quinta-feira</strong>
+            <p>Você ganhou ${promoQty} refrigerante(s) de 1L.</p>
+            <label>Escolha o refrigerante:</label>
+            <select id="promoDrink">
+                <option value="Guaraná 1L">Guaraná 1L</option>
+                <option value="Pepsi 1L">Pepsi 1L</option>
+            </select>
+        `;
         } else {
             promoBox.classList.add("hidden");
             promoBox.innerHTML = "";
@@ -1260,7 +1260,7 @@ function confirmPizza() {
         ? `Pizza metade ${flavor1} / metade ${flavor2}`
         : `Pizza ${flavor1}`;
 
-    addToCart({
+    const pizzaItem = {
         type: "pizza",
         category: "Pizza",
         name: pizzaName,
@@ -1271,16 +1271,14 @@ function confirmPizza() {
         edgePrice,
         price: finalPrice,
         key: `pizza-${size}-${flavor1}-${flavor2 || "inteira"}-${edge}`,
-    });
+    };
 
-    addToCart(pizzaItem);
     closePizzaModal();
 
-    if (size === "G" && isThursday()) {
-        setTimeout(() => {
-            showPromotionChoice();
-        }, 300);
-    }
+    setTimeout(() => {
+        addToCart(pizzaItem);
+        updateCart();
+    }, 150);
 }
 
 function showPromotionChoice() {
@@ -1290,18 +1288,24 @@ function showPromotionChoice() {
         return;
     }
 
+    const promoQty = getPromotionPizzaGCount();
+
+    if (promoQty <= 0) {
+        promoBox.classList.add("hidden");
+        promoBox.innerHTML = "";
+        return;
+    }
+
     promoBox.classList.remove("hidden");
     promoBox.innerHTML = `
         <strong>Promoção de quinta-feira</strong>
-        <p>Você ganhou 1 refrigerante de 1L.</p>
+        <p>Você ganhou ${promoQty} refrigerante(s) de 1L.</p>
         <label>Escolha o refrigerante grátis:</label>
         <select id="promoDrink">
             <option value="Guaraná 1L">Guaraná 1L</option>
             <option value="Pepsi 1L">Pepsi 1L</option>
         </select>
     `;
-
-    openCart();
 }
 
 function openReservationModal() {
@@ -1312,8 +1316,8 @@ function closeReservationModal() {
     document.getElementById("reservationModal").classList.remove("show");
 }
 
-function builReservationWhatsAppMessage(reservationData) {
-    let messafe = `*📅 Nova solicitação de Reserva - Cabocos Bar*\n\n`;
+function buildReservationWhatsAppMessage(reservationData) {
+    let message = `*📅 Nova solicitação de Reserva - Cabocos Bar*\n\n`;
     message += `👤 *Nome:* ${reservationData.nome}\n`;
     message += `📱 *Telefone:* ${reservationData.telefone}\n`;
     message += `📆 *Data:* ${reservationData.data}\n`;
@@ -1329,8 +1333,6 @@ function builReservationWhatsAppMessage(reservationData) {
 
     return message;
 }
-
-
 
 function buildWhatsAppMessage(orderData) {
     const itemsText = orderData.itens.map(item => {
@@ -1405,9 +1407,9 @@ document.getElementById("reservationForm").addEventListener("submit", async func
     const phone = document.getElementById("reservationPhone").value.trim();
     const date = document.getElementById("reservationDate").value;
     const time = document.getElementById("reservationTime").value;
-    const people = Number (document.getElementById("reservationPeople").value);
+    const people = Number(document.getElementById("reservationPeople").value);
     const type = document.getElementById("reservationType").value;
-    const obs = document.getElementById("reservationOBS").value.trim();
+    const obs = document.getElementById("reservationObs").value.trim();
 
     if (!name || !phone || !date || !time || !people || !type) {
         alert("Preencha todos os campos obrigatórios da reserva.");
@@ -1419,6 +1421,7 @@ document.getElementById("reservationForm").addEventListener("submit", async func
         telefone: phone,
         data: date,
         horario: time,
+        pessoas: people,
         tipo: type,
         observacoes: obs,
         status: "NOVA",
@@ -1427,18 +1430,16 @@ document.getElementById("reservationForm").addEventListener("submit", async func
 
     try {
         await addDoc(collection(db, "reservas"), reservationData);
-        
+
         const message = buildReservationWhatsAppMessage(reservationData);
-        const encodeMessage = encodeURIComponent(message);
-
-        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeMessage}`, "_blank");
-
-        alert("Solicitação de reserva enviada com sucesso! Continue pelo WhatsApp para confirmar.");
+        const encodedMessage = encodeURIComponent(message);
 
         document.getElementById("reservationForm").reset();
         closeReservationModal();
+
+        window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
     } catch (error) {
-        contole.error("Erro ao salvar reserva.", error);
+        console.error("Erro ao salvar reserva:", error);
         alert("Erro ao solicitar reserva. Tente novamente.");
     }
 });
@@ -1462,6 +1463,11 @@ document.getElementById("orderForm").addEventListener("submit", async function (
     const payment = document.getElementById("paymentMethod").value;
     const pixProof = document.getElementById("pixProof").files[0];
 
+    if (!name || !address || !payment) {
+        alert("Preencha nome, endereço e forma de pagamento.");
+        return;
+    }
+
     if (payment === "Pix" && !pixProof) {
         alert("Para pagamento via Pix, selecione o comprovante antes de continuar.");
         return;
@@ -1481,7 +1487,7 @@ document.getElementById("orderForm").addEventListener("submit", async function (
         promocao: promoQty > 0
             ? {
                 quantidade: promoQty,
-                bebida: promoDrink,
+                bebida: promoDrink || "Guaraná 1L",
             }
             : null,
         status: "NOVO",
@@ -1494,10 +1500,6 @@ document.getElementById("orderForm").addEventListener("submit", async function (
         const message = buildWhatsAppMessage(orderData);
         const encodedMessage = encodeURIComponent(message);
 
-        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`, "_blank");
-
-        alert("Pedido enviado com sucesso! Continue pelo WhatsApp para acompanhar seu pedido.");
-
         cart = [];
         updateCart();
         closeCart();
@@ -1505,6 +1507,8 @@ document.getElementById("orderForm").addEventListener("submit", async function (
         document.getElementById("orderForm").reset();
         document.getElementById("pixBox").classList.add("hidden");
         document.getElementById("pixProof").removeAttribute("required");
+
+        window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
     } catch (error) {
         console.error("Erro ao salvar pedido:", error);
         alert("Erro ao enviar pedido. Tente novamente.");
