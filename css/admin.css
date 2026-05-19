@@ -1003,3 +1003,70 @@ body {
         display: none !important;
     }
 }
+
+/* NOTIFICAÇÃO DE NOVO PEDIDO */
+
+.new-order-alert {
+    position: sticky;
+    top: 12px;
+    z-index: 50;
+    background: var(--yellow);
+    color: #000000;
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
+    animation: newOrderPulse 1s ease-in-out infinite alternate;
+}
+
+.new-order-alert.hidden {
+    display: none;
+}
+
+.new-order-alert.show {
+    display: block;
+}
+
+.new-order-highlight {
+    border: 2px solid var(--yellow);
+    box-shadow: 0 0 0 4px rgba(255, 200, 0, 0.18), 0 12px 28px rgba(0, 0, 0, 0.35);
+    animation: newOrderCardPulse 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes newOrderPulse {
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(1.015);
+    }
+}
+
+@keyframes newOrderCardPulse {
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(1.01);
+    }
+}
+
+.whatsapp-client-btn {
+    width: 100%;
+    margin-top: 10px;
+    border: none;
+    border-radius: 12px;
+    padding: 11px 12px;
+    background: #25d366;
+    color: #000000;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.whatsapp-client-btn:hover {
+    filter: brightness(0.95);
+}

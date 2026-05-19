@@ -21,6 +21,8 @@ let unsubscribeOrders = null;
 let unsubscribeStock = null;
 let unsubscribeReservations = null;
 let unavailableIngredients = [];
+let firstOrderLoad = true;
+let knownOrderIds = new Set();
 
 const ingredientsList = [
     "Molho de tomate",
@@ -272,6 +274,30 @@ function getFilteredOrders() {
     return allOrders.filter(order => order.status === currentFilter);
 }
 
+function onlyNumbers(value) {
+    return String(value || "").replace(/\D/g, "");
+}
+
+function openClientWhatsApp(phone, clientName) {
+    const phoneNumbers = onlyNumbers(phone);
+
+    if (!phoneNumbers) {
+        alert("Número de telefone do cliente não informado.");
+        return;
+    }
+
+    const finalPhone = phoneNumbers.startsWith("55")
+        ? phoneNumbers
+        : `55${phoneNumbers}`;
+
+    const message = encodeURIComponent(
+        `Olá ${clientName || "tudo bem"}?, aqui é do Cabocos Bar! Estamos entrando em contato sobre o seu pedido.`
+    )
+
+    window.open(`https://wa.me/${finalPhone}?text=${message}`, "_blank");
+}
+
+
 function renderOrders() {
     const ordersContainer = document.getElementById("orders");
     const ordersInfo = document.getElementById("ordersInfo");
@@ -308,8 +334,20 @@ function renderOrders() {
 
             <div class="order-info">
                 <p><strong>Cliente:</strong> ${order.cliente || "Não informado"}</p>
+                <p><strong>WhatsApp:</strong> ${order.telefone || "Não informado"}</p>
                 <p><strong>Endereço:</strong> ${order.endereco || "Não informado"}</p>
                 <p><strong>Pagamento:</strong> ${order.pagamento || "Não informado"}</p>
+
+                ${order.telefone
+            ? `<button 
+            type="button" 
+            class="whatsapp-client-btn" 
+            onclick="openClientWhatsApp('${order.telefone}', '${order.cliente || ""}')"
+        >
+            Chamar cliente no WhatsApp
+        </button>`
+            : ""
+        }
                 ${order.observacoes
             ? `<p><strong>Observações:</strong> ${order.observacoes}</p>`
             : ""
@@ -385,6 +423,39 @@ function renderOrderItems(items) {
     }).join("");
 }
 
+function notifyNewOrder(orderId) {
+    const alertBox = document.getElementById("newOrderAlert");
+    const sound = document.getElementById("newOrderSound");
+
+    if (alertBox) {
+        alertBox.classList.remove("hidden");
+        alertBox.classList.add("show");
+
+        setTimeout(() => {
+            alertBox.classList.add("hidden");
+            alertBox.classList.remove("show");
+        }, 5000);
+    }
+
+    if (sound) {
+        sound.currentTime = 0;
+
+        sound.play().catch(() => {
+            console.warn("O navegador bloqueou o som até haver interação com a página.");
+        });
+    }
+
+    const orderCard = document.getElementById(`order-{orderId}`);
+
+    if (orderCard) {
+        orderCard.classList.add("new-order-highlight");
+
+        setTimeout(() => {
+            order.classList.remove("new-order-highlight");
+        }, 7000);
+    }
+}
+
 function listenOrders() {
     if (unsubscribeOrders) {
         return;
@@ -396,6 +467,8 @@ function listenOrders() {
     );
 
     unsubscribeOrders = onSnapshot(ordersQuery, snapshot => {
+        const previousOrderIds = new Set(knownOrderIds);
+
         allOrders = snapshot.docs.map(document => {
             const data = document.data();
 
@@ -406,7 +479,19 @@ function listenOrders() {
             };
         });
 
+        knownOrderIds = new Set(allOrders.map(order => order.id));
+
+        const newOrders = allOrders.filter(order =>
+            !previousOrderIds.has(order.id)
+        );
+
         renderOrders();
+
+        if (!firstOrderLoad && newOrders.length > 0) {
+            notifyNewOrder(newOrders[0].id);
+        }
+
+        firstOrderLoad = false;
     }, error => {
         console.error("Erro ao carregar pedidos:", error);
 
@@ -516,7 +601,7 @@ function listenReservations() {
     }, error => {
         console.error("Erro ao carregar reservar", error);
 
-        document.getElementById("reservationsInfo").textContent = "Erro ao carregar reservas";
+        document.getElementById("reservationInfo").textContent = "Erro ao carregar reservas";
         document.getElementById("reservationsList").innerHTML = `
             <p class="empty-message">
                 Erro ao carregar reservas. Verifique o console.
@@ -527,7 +612,7 @@ function listenReservations() {
 
 function renderReservations() {
     const container = document.getElementById("reservationsList");
-    const info = document.getElementById("reservationsInfo");
+    const info = document.getElementById("reservationInfo");
 
     if (!container || !info) {
         return;
@@ -678,7 +763,7 @@ function printOrder(orderId) {
 
     const printArea = document.getElementById("printArea");
 
-    if ("!printArea") {
+    if (!printArea) {
         alert("Área de impressão não encontrada");
         return;
     }
@@ -788,3 +873,4 @@ window.printOrder = printOrder;
 window.logoutAdmin = logoutAdmin;
 window.toggleIngredientAvailability = toggleIngredientAvailability;
 window.updateReservationStatus = updateReservationStatus;
+window.openClientWhatsApp = openClientWhatsApp;

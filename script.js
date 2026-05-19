@@ -1358,6 +1358,7 @@ function buildWhatsAppMessage(orderData) {
 
     let message = `*🧾 Novo Pedido - Cabocos Bar*\n\n`;
     message += `👤 *Cliente:* ${orderData.cliente}\n`;
+    message += `📱 *WhatsApp:* ${orderData.telefone || "Não informado"}\n`;
     message += `📍 *Endereço:* ${orderData.endereco}\n\n`;
     message += `🍽️ *Pedido:*\n${itemsText}\n\n`;
 
@@ -1458,12 +1459,13 @@ document.getElementById("orderForm").addEventListener("submit", async function (
     }
 
     const name = document.getElementById("clientName").value.trim();
+    const phone = document.getElementById("clientPhone").value.trim();
     const address = document.getElementById("clientAddress").value.trim();
     const obs = document.getElementById("clientObs").value.trim();
     const payment = document.getElementById("paymentMethod").value;
     const pixProof = document.getElementById("pixProof").files[0];
 
-    if (!name || !address || !payment) {
+    if (!name || !phone || !address || !payment) {
         alert("Preencha nome, endereço e forma de pagamento.");
         return;
     }
@@ -1479,6 +1481,7 @@ document.getElementById("orderForm").addEventListener("submit", async function (
 
     const orderData = {
         cliente: name,
+        telefone: phone,
         endereco: address,
         observacoes: obs,
         pagamento: payment,
