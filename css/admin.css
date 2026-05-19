@@ -1070,3 +1070,16 @@ body {
 .whatsapp-client-btn:hover {
     filter: brightness(0.95);
 }
+
+.status-times {
+    margin-top: 12px;
+    padding: 10px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border-soft);
+}
+
+.status-times p {
+    margin: 4px 0;
+    font-size: 0.92rem;
+}

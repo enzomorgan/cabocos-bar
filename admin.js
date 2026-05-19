@@ -297,6 +297,41 @@ function openClientWhatsApp(phone, clientName) {
     window.open(`https://wa.me/${finalPhone}?text=${message}`, "_blank");
 }
 
+function getStatusTimestampField(status) {
+    const fields = {
+        PREPARO: "preparouEm",
+        ENTREGA: "saiuParaEntregaEm",
+        FINALIZADO: "finalizadoEm",
+        CANCELADO: "canceladoEm",
+    };
+    
+    return fields[status] || null;
+}
+
+function renderStatusTimes(order) {
+    const times = [];
+
+    if (order.preparouEm) {
+        times.push(`<p><strong>Em preparo:</strong> ${formatDate(order.preparouEm)}</p>`);
+    }
+
+    if (order.saiuEntregaEm) {
+        times.push(`<p><strong>Saiu para entrega:</strong> ${formatDate(order.saiuEntregaEm)}</p>`);
+    }
+
+    if (order.finalizadoEm) {
+        times.push(`<p><strong>Finalizado:</strong> ${formatDate(order.finalizadoEm)}</p>`);
+    }
+
+    if (order.canceladoEm) {
+        times.push(`<p><strong>Cancelado:</strong> ${formatDate(order.canceladoEm)}</p>`);
+    }
+
+    return times.length
+        ? `<div class="status-times">${times.join("")}</div>`
+        : "";
+}
+
 
 function renderOrders() {
     const ordersContainer = document.getElementById("orders");
@@ -356,6 +391,8 @@ function renderOrders() {
             ? `<p><strong>Promoção:</strong> ${order.promocao.quantidade} refrigerante(s) grátis - ${order.promocao.bebida}</p>`
             : ""
         }
+
+        ${renderStatusTimes(order)}
             </div>
 
             <div class="order-items">
@@ -739,12 +776,19 @@ async function updateOrderStatus(orderId) {
     }
 
     const newStatus = select.value;
+    const timestampField = getStatusTimestampField(newStatus);
+
+    const updateData = {
+        status: newStatus,
+        atualizadoEm: new Date().toISOString(),
+    };
+
+    if (timestampField) {
+        updateData[timestampField] = new Date().toISOString();
+    }
 
     try {
-        await updateDoc(doc(db, "pedidos", orderId), {
-            status: newStatus,
-            atualizadoEm: new Date().toISOString(),
-        });
+        await updateDoc(doc(db, "pedidos", orderId), updateData);
 
         alert("Status atualizado com sucesso!");
     } catch (error) {
