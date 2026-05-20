@@ -1359,6 +1359,7 @@ function buildWhatsAppMessage(orderData) {
     let message = `*🧾 Novo Pedido - Cabocos Bar*\n\n`;
     message += `👤 *Cliente:* ${orderData.cliente}\n`;
     message += `📱 *WhatsApp:* ${orderData.telefone || "Não informado"}\n`;
+    message += `🚚 *Tipo:* ${orderData.tipoEntrega || "Entrega"}\n`;
     message += `📍 *Endereço:* ${orderData.endereco}\n\n`;
     message += `🍽️ *Pedido:*\n${itemsText}\n\n`;
 
@@ -1393,6 +1394,19 @@ document.getElementById("paymentMethod").addEventListener("change", function () 
         pixBox.classList.add("hidden");
         pixProof.removeAttribute("required");
         pixProof.value = "";
+    }
+});
+
+document.getElementById("deliveryType").addEventListener("change", function () {
+    const addressInput = document.getElementById("clientAddress");
+
+    if (this.value === "Retirar no local") {
+        addressInput.classList.add("hidden");
+        addressInput.removeAttribute("required");
+        addressInput.value = "";
+    } else {
+        addressInput.classList.remove("hidden");
+        addressInput.setAttribute("required", "required");
     }
 });
 
@@ -1460,13 +1474,19 @@ document.getElementById("orderForm").addEventListener("submit", async function (
 
     const name = document.getElementById("clientName").value.trim();
     const phone = document.getElementById("clientPhone").value.trim();
+    const deliveryType = document.getElementById("deliveryType").value;
     const address = document.getElementById("clientAddress").value.trim();
     const obs = document.getElementById("clientObs").value.trim();
     const payment = document.getElementById("paymentMethod").value;
     const pixProof = document.getElementById("pixProof").files[0];
 
-    if (!name || !phone || !address || !payment) {
-        alert("Preencha nome, endereço e forma de pagamento.");
+    if (!name || !phone || !deliveryType || !payment) {
+        alert("Preencha nome, Whatsapp, tipo de entrega e forma de pagamento.");
+        return;
+    }
+
+    if (deliveryType === "Entrega" && !address) {
+        alert("Informe o endereço para entrega.");
         return;
     }
 
@@ -1482,7 +1502,7 @@ document.getElementById("orderForm").addEventListener("submit", async function (
     const orderData = {
         cliente: name,
         telefone: phone,
-        endereco: address,
+        endereco: deliveryType === "Entrega" ? address : "Retirar no local",
         observacoes: obs,
         pagamento: payment,
         itens: cart.map(item => ({ ...item })),

@@ -430,6 +430,7 @@ function renderOrders() {
             <div class="order-info">
                 <p><strong>Cliente:</strong> ${order.cliente || "Não informado"}</p>
                 <p><strong>WhatsApp:</strong> ${order.telefone || "Não informado"}</p>
+                <p><strong>Tipo:</strong> ${order.tipoEntrega || "Entrega"}</p>
                 <p><strong>Endereço:</strong> ${order.endereco || "Não informado"}</p>
                 <p><strong>Pagamento:</strong> ${order.pagamento || "Não informado"}</p>
 
@@ -915,6 +916,8 @@ function buildPrintReceipt(order) {
 
         <div class="receipt-section">
             <p><strong>Cliente:</strong> ${order.cliente || "Não informado"}</p>
+            <p><strong>WhatsApp:</strong> ${order.telefone || "Não informado"}</p>
+            <p><strong>Tipo:</strong> ${order.tipoEntrega || "Entrega"}</p>
             <p><strong>Endereço:</strong> ${order.endereco || "Não informado"}</p>
             <p><strong>Pagamento:</strong> ${order.pagamento || "Não informado"}</p>
         </div>
