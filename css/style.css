@@ -576,3 +576,13 @@ textarea {
         grid-template-columns: 1fr 1fr;
     }
 }
+
+.delivery-fee-box {
+    margin: 12px 0;
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(247, 201, 72, 0.12);
+    border: 1px solid rgba(247, 201, 72, 0.35);
+    color: var(--yellow);
+    font-weight: bold;
+}

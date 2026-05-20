@@ -238,7 +238,7 @@ function getFinanceFilteredOrders(orders) {
     const now = new Date();
 
     return orders.filter(order => {
-        if(order.status === "CANCELADO") {
+        if (order.status === "CANCELADO") {
             return false;
         }
 
@@ -281,7 +281,7 @@ function getFinanceFilteredOrders(orders) {
     });
 }
 
-function getFinanceFilterLabel(){
+function getFinanceFilterLabel() {
     const labels = {
         HOJE: "Resumo financeiro de hoje",
         SEMANA: "Resumo financeiro desta semana",
@@ -364,7 +364,7 @@ function getStatusTimestampField(status) {
         FINALIZADO: "finalizadoEm",
         CANCELADO: "canceladoEm",
     };
-    
+
     return fields[status] || null;
 }
 
@@ -463,9 +463,11 @@ function renderOrders() {
                 </ul>
             </div>
 
-            <p class="order-total">
-                Total: R$ ${formatPrice(order.total)}
-            </p>
+            <div class="order-price-summary">
+                <p>Subtotal: R$ ${formatPrice(order.subtotal || order.total)}</p>
+                <p>Taxa Sítio Morcego: R$ ${formatPrice(order.taxaEntrega || 0)}</p>
+                <strong>Total: R$ ${formatPrice(order.total)}</strong>
+            </div>
 
             <div class="order-actions">
                 <select id="status-${order.id}">
@@ -820,7 +822,7 @@ function filterFinance(period) {
 
     const clickedButton = Array.from(document.querySelectorAll(".finance-filters button"))
         .find(button => button.getAttribute("onclick") === `filterFinance('${period}')`);
-        
+
     if (clickedButton) {
         clickedButton.classList.add("active");
     }
@@ -942,19 +944,24 @@ function buildPrintReceipt(order) {
             : ""
         }
 
-            <div class="receipt-section">
-                <h2>Itens</h2>
-                ${buildPrintItems(order.itens || [])}
-            </div>
-
-            <div class="receipt-total">
-                TOTAL: R$ ${formatPrice(order.total)}
-            </div>
-
-            <div class="receipt-footer">
-                <p>Impresso em ${formatDate(new Date().toISOString())}</p>
-            </div>
+        <div class="receipt-section">
+            <h2>Itens</h2>
+            ${buildPrintItems(order.itens || [])}
         </div>
+
+        <div class="receipt-section">
+            <p><strong>Subtotal:</strong> R$ ${formatPrice(order.subtotal || order.total)}</p>
+            <p><strong>Taxa Sítio Morcego:</strong> R$ ${formatPrice(order.taxaEntrega || 0)}</p>
+        </div>
+
+        <div class="receipt-total">
+            TOTAL: R$ ${formatPrice(order.total)}
+        </div>
+
+        <div class="receipt-footer">
+            <p>Impresso em ${formatDate(new Date().toISOString())}</p>
+        </div>
+    </div>
     `;
 }
 

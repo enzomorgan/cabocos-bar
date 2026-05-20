@@ -1120,3 +1120,21 @@ body {
         width: 100%;
     }
 }
+
+.order-price-summary {
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 12px;
+    background: var(--bg-deep);
+    border: 1px solid var(--border-soft);
+}
+
+.order-price-summary p {
+    margin-bottom: 5px;
+    color: var(--muted);
+}
+
+.order-price-summary strong {
+    color: var(--yellow);
+    font-size: 18px;
+}

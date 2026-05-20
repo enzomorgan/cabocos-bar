@@ -1,6 +1,7 @@
 import { db, collection, addDoc, onSnapshot } from "./firebase.js";
 
 const WHATSAPP_NUMBER = "5584999316294";
+const MORCEGO_DELIVERY_FEE = 5;
 
 let unavailableIngredients = [];
 
@@ -754,8 +755,27 @@ function getPromotionPizzaGCount() {
     }, 0);
 }
 
-function calculateTotal() {
+function hasMorcegoAddress(address) {
+    return normalizeText(address).includes("morcego");
+}
+
+function calculateSubtotal() {
     return cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+}
+
+function getDeliveryFee() {
+    const deliveryType = document.getElementById("deliveryType")?.value;
+    const address = document.getElementById("clientAddress")?.value || "";
+
+    if (deliveryType === "Entrega" && hasMorcegoAddress(address)) {
+        return MORCEGO_DELIVERY_FEE;
+    }
+
+    return 0;
+}
+
+function calculateTotal() {
+    return calculateSubtotal() + getDeliveryFee();
 }
 
 function listenUnavailableIngredients() {
@@ -1029,7 +1049,22 @@ function updateCart() {
         }
     }
 
-    cartTotal.textContent = formatPrice(calculateTotal());
+    const subtotal = calculateSubtotal();
+    const deliveryFee = getDeliveryFee();
+    const total = subtotal + deliveryFee;
+
+    const deliveryFeeBox = document.getElementById("deliveryFeeBox");
+
+    if (deliveryFeeBox) {
+        if (deliveryFee > 0) {
+            deliveryFeeBox.classList.remove("hidden");
+            deliveryFeeBox.innerHTML = `
+                <strong>Taxa Sítio Morcego: </strong> R$ ${formatPrice(deliveryFee)}
+            `;
+        } else {
+            deliveryFeeBox.classList.add("hidden");
+            deliveryFeeBox.innerHTML = "";
+        }
 }
 
 function getItemDetails(item) {
@@ -1369,6 +1404,12 @@ function buildWhatsAppMessage(orderData) {
         message += `Opção escolhida: ${orderData.promocao.bebida}\n\n`;
     }
 
+    message += `💵 *Subtotal:* R$ ${formatPrice(orderData.subtotal || orderData.total)}\n`;
+
+    if (orderData.taxaEntrega > 0) {
+        message += `🚚 *Taxa Sítio Morcego:* R$ ${formatPrice(orderData.taxaEntrega)}\n`;
+    }
+
     message += `💰 *Total:* R$ ${formatPrice(orderData.total)}\n`;
     message += `💳 *Pagamento:* ${orderData.pagamento}\n`;
 
@@ -1408,6 +1449,10 @@ document.getElementById("deliveryType").addEventListener("change", function () {
         addressInput.classList.remove("hidden");
         addressInput.setAttribute("required", "required");
     }
+});
+
+document.getElementById("clientAddress").addEventListener("input", function () {
+    updateCart();
 });
 
 document.getElementById("reservationForm").addEventListener("submit", async function (event) {
@@ -1495,7 +1540,9 @@ document.getElementById("orderForm").addEventListener("submit", async function (
         return;
     }
 
+    const subtotal = calculateSubtotal();
     const total = calculateTotal();
+    const taxaEntrega = getDeliveryFee();
     const promoQty = getPromotionPizzaGCount();
     const promoDrink = document.getElementById("promoDrink")?.value || "";
 
@@ -1506,6 +1553,8 @@ document.getElementById("orderForm").addEventListener("submit", async function (
         observacoes: obs,
         pagamento: payment,
         itens: cart.map(item => ({ ...item })),
+        subtotal,
+        taxaEntrega,
         total,
         promocao: promoQty > 0
             ? {
