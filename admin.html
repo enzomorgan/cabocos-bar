@@ -52,7 +52,7 @@
             </div>
                 <audio id="NewOrderSound" preload="auto">
                     <source src="sounds/new-order.mp3" type="audio/mpeg">
-                </<audio>
+                </audio>
                     
                 <section class="summary">
                     <div class="summary-card">
@@ -75,6 +75,20 @@
                             <p>Acompanhe os pedidos e vendas do dia atual.</p>
                         </div>
                     </div>
+                    <div class="finance-filters">
+                        <button type="button" class="active" onclick="filterFinance('HOJE')">
+                            Hoje
+                        </button>
+
+                        <button type="button" onclick="filterFinance('MES')">
+                            Este mês
+                        </button>
+
+                        <button type="button" onclick="filterFinance('TODOS')">
+                            Todos
+                        </button>
+                    </div>
+
                     <div class="daily-cards">
                         <div class="daily-card">
                             <span>Pedidos hoje</span>

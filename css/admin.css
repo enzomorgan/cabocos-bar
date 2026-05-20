@@ -1083,3 +1083,40 @@ body {
     margin: 4px 0;
     font-size: 0.92rem;
 }
+
+/* FILTRO FINANCEIRO */
+
+.finance-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 16px 0 18px;
+}
+
+.finance-filters button {
+    border: 1px solid var(--border-soft);
+    background: var(--bg-card-soft);
+    color: var(--white);
+    border-radius: 999px;
+    padding: 10px 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.finance-filters button.active,
+.finance-filters button:hover {
+    background: var(--yellow);
+    color: #000000;
+    border-color: var(--yellow);
+}
+
+@media (max-width: 600px) {
+    .finance-filters {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .finance-filters button {
+        width: 100%;
+    }
+}

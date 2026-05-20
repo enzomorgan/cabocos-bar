@@ -17,6 +17,7 @@ import {
 let allOrders = [];
 let allReservations = [];
 let currentFilter = "TODOS";
+let currentFinanceFilter = "HOJE";
 let unsubscribeOrders = null;
 let unsubscribeStock = null;
 let unsubscribeReservations = null;
@@ -233,37 +234,96 @@ function isToday(dateValue) {
     );
 }
 
-function renderDailyDashboard(orders) {
-    const todayOrders = orders.filter(order =>
-        isToday(order.criadoEm) && order.status !== "CANCELADO"
-    );
+function getFinanceFilteredOrders(orders) {
+    const now = new Date();
 
-    const totalToday = todayOrders.reduce((sum, order) => {
+    return orders.filter(order => {
+        if(order.status === "CANCELADO") {
+            return false;
+        }
+
+        if (currentFinanceFilter === "TODOS") {
+            return true;
+        }
+
+        if (!order.criadoEm) {
+            return false;
+        }
+
+        const orderDate = new Date(order.criadoEm);
+
+        if (currentFinanceFilter === "HOJE") {
+            return (
+                orderDate.getDate() === now.getDate() &&
+                orderDate.getMonth() === now.getMonth() &&
+                orderDate.getFullYear() === now.getFullYear()
+            );
+        }
+
+        if (currentFinanceFilter === "SEMANA") {
+            const startOfWeek = new Date(startOfWeek.getDate() - diff);
+            startOfWeek.setHours(0, 0, 0, 0);
+
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(startOfWeek.getDate() + 7);
+
+            return orderDate >= startOfWeek && orderDate < endOfWeek;
+        }
+
+        if (currentFinanceFilter === "MES") {
+            return (
+                orderDate.getMonth() === now.getMonth() &&
+                orderDate.getFullYear() === now.getFullYear()
+            );
+        }
+
+        return true;
+    });
+}
+
+function getFinanceFilterLabel(){
+    const labels = {
+        HOJE: "Resumo financeiro de hoje",
+        SEMANA: "Resumo financeiro desta semana",
+        MES: "Resumo financeiro deste mês",
+        TODOS: "Resumo financeiro geral",
+    };
+
+    return labels[currentFinanceFilter] || "Resumo financeiro";
+}
+
+function renderDailyDashboard(orders) {
+    const filteredOrders = getFinanceFilteredOrders(orders);
+
+    const totalPeriod = filteredOrders.reduce((sum, order) => {
         return sum + Number(order.total || 0);
     }, 0);
 
-    const averageTicket = todayOrders.length > 0
-        ? totalToday / todayOrders.length
+    const averageTicket = filteredOrders.length > 0
+        ? totalPeriod / filteredOrders.length
         : 0;
 
-    const pixTotal = todayOrders
-        .filter(order => order.pagamento === "Pix")
+    const pixTotal = filteredOrders
+        .filter(order => order.pagamento === "PIX")
         .reduce((sum, order) => sum + Number(order.total || 0), 0);
 
-    const cardTotal = todayOrders
-        .filter(order => order.pagamento === "Cartão")
+    const cashTotal = filteredOrders
+        .filter(order => order.pagamento === "DINHEIRO")
         .reduce((sum, order) => sum + Number(order.total || 0), 0);
 
-    const cashTotal = todayOrders
-        .filter(order => order.pagamento === "Dinheiro")
+    const cardTotal = filteredOrders
+        .filter(order => order.pagamento === "CARTÃO")
         .reduce((sum, order) => sum + Number(order.total || 0), 0);
 
-    document.getElementById("todayOrders").textContent = todayOrders.length;
-    document.getElementById("todaySold").textContent = `R$ ${formatPrice(totalToday)}`;
+    document.getElementById("financeTitle").textContent = getFinanceFilterLabel();
+    document.getElementById("financeSubtitle").textContent = `${filteredOrders.length} pedido(s) no período selecionado.`;
+
+    document.getElementById("todayOrders").textContent = filteredOrders.length;
+    document.getElementById("todayTotal").textContent = `R$ ${formatPrice(totalPeriod)}`;
     document.getElementById("averageTicket").textContent = `R$ ${formatPrice(averageTicket)}`;
     document.getElementById("pixTotal").textContent = `R$ ${formatPrice(pixTotal)}`;
-    document.getElementById("cardTotal").textContent = `R$ ${formatPrice(cardTotal)}`;
     document.getElementById("cashTotal").textContent = `R$ ${formatPrice(cashTotal)}`;
+    document.getElementById("cardTotal").textContent = `R$ ${formatPrice(cardTotal)}`;
 }
 
 function getFilteredOrders() {
@@ -291,7 +351,7 @@ function openClientWhatsApp(phone, clientName) {
         : `55${phoneNumbers}`;
 
     const message = encodeURIComponent(
-        `Olá ${clientName || "tudo bem"}?, aqui é do Cabocos Bar! Estamos entrando em contato sobre o seu pedido.`
+        `Olá ${clientName || "tudo bem"}!, aqui é do Cabocos Bar! Estamos entrando em contato sobre o seu pedido.`
     )
 
     window.open(`https://wa.me/${finalPhone}?text=${message}`, "_blank");
@@ -315,8 +375,8 @@ function renderStatusTimes(order) {
         times.push(`<p><strong>Em preparo:</strong> ${formatDate(order.preparouEm)}</p>`);
     }
 
-    if (order.saiuEntregaEm) {
-        times.push(`<p><strong>Saiu para entrega:</strong> ${formatDate(order.saiuEntregaEm)}</p>`);
+    if (order.saiuParaEntregaEm) {
+        times.push(`<p><strong>Saiu para entrega:</strong> ${formatDate(order.saiuParaEntregaEm)}</p>`);
     }
 
     if (order.finalizadoEm) {
@@ -482,13 +542,13 @@ function notifyNewOrder(orderId) {
         });
     }
 
-    const orderCard = document.getElementById(`order-{orderId}`);
+    const orderCard = document.getElementById(`order-${orderId}`);
 
     if (orderCard) {
         orderCard.classList.add("new-order-highlight");
 
         setTimeout(() => {
-            order.classList.remove("new-order-highlight");
+            orderCard.classList.remove("new-order-highlight");
         }, 7000);
     }
 }
@@ -750,6 +810,23 @@ async function toggleIngredientAvailability(id, name, isUnavailable) {
     }
 }
 
+function filterFinance(period) {
+    currentFilter = period;
+
+    document.querySelectorAll(".finance-filters button").forEach(button => {
+        button.classList.remove("active");
+    });
+
+    const clickedButton = Array.from(document.querySelectorAll(".finance-filters button"))
+        .find(button => button.getAttribute("onclick") === `filterFinance('${period}')`);
+        
+    if (clickedButton) {
+        clickedButton.classList.add("active");
+    }
+
+    renderDailyDashboard(allOrders);
+}
+
 function filterStatus(status) {
     currentFilter = status;
 
@@ -918,3 +995,4 @@ window.logoutAdmin = logoutAdmin;
 window.toggleIngredientAvailability = toggleIngredientAvailability;
 window.updateReservationStatus = updateReservationStatus;
 window.openClientWhatsApp = openClientWhatsApp;
+window.filterFinance = filterFinance;
