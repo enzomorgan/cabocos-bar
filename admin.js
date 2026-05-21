@@ -567,23 +567,23 @@ function notifyNewOrder(orderId) {
 
 function renderStoreStatus() {
     const toggle = document.getElementById("storeOpenToggle");
-    const messageInput = document.getElementById("closeMessageInput");
+    const messageInput = document.getElementById("closedMessageInput");
     const info = document.getElementById("storeStatusInfo");
 
     if (!toggle || !messageInput || !info) {
         return;
     }
 
-    toggle.checked = establishmentConfig.abertoManuel;
+    toggle.checked = establishmentConfig.abertoManual;
     messageInput.value = establishmentConfig.mensagemFechado || "";
 
-    info.textContent = establishmentConfig.abertoManuel
+    info.textContent = establishmentConfig.abertoManual
         ? "Aberto manualmente."
         : "Fechado manualmente.";
 }
 
 function listenStoreStatus() {
-    openSnapshot(doc(db, "configuracoes", "estabelecimento"), snapshot => {
+    onSnapshot(doc(db, "configuracoes", "estabelecimento"), snapshot => {
         if (snapshot.exists()) {
             establishmentConfig = {
                 abertoManual: snapshot.data().abertoManual !== false,
@@ -599,7 +599,7 @@ function listenStoreStatus() {
 
 async function saveStoreStatus() {
     const toggle = document.getElementById("storeOpenToggle");
-    const messageInput = document.getElementById("closeMessageInput");
+    const messageInput = document.getElementById("closedMessageInput");
 
     if (!toggle || !messageInput) {
         alert("Campos de status não encontrados.");
@@ -612,9 +612,9 @@ async function saveStoreStatus() {
     try {
         await setDoc(doc(db, "configuracoes", "estabelecimento"), {
             abertoManual,
-            mesangemFechado,
+            mensagemFechado,
             atualizadoEm: new Date().toISOString(),
-    });
+        });
 
         alert("Status do estabelecimento salvo com sucesso!");
     } catch (error) {
