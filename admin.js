@@ -266,7 +266,11 @@ function getFinanceFilteredOrders(orders) {
         }
 
         if (currentFinanceFilter === "SEMANA") {
-            const startOfWeek = new Date(startOfWeek.getDate() - diff);
+            const startOfWeek = new Date(now);
+            const day = startOfWeek.getDay();
+            const diff = day === 0 ? 6 : day - 1;
+
+            startOfWeek.setDate(startOfWeek.getDate() - diff);
             startOfWeek.setHours(0, 0, 0, 0);
 
             const endOfWeek = new Date(startOfWeek);
@@ -324,7 +328,7 @@ function renderDailyDashboard(orders) {
     document.getElementById("financeSubtitle").textContent = `${filteredOrders.length} pedido(s) no período selecionado.`;
 
     document.getElementById("todayOrders").textContent = filteredOrders.length;
-    document.getElementById("todayTotal").textContent = `R$ ${formatPrice(totalPeriod)}`;
+    document.getElementById("todaySold").textContent = `R$ ${formatPrice(totalPeriod)}`;
     document.getElementById("averageTicket").textContent = `R$ ${formatPrice(averageTicket)}`;
     document.getElementById("pixTotal").textContent = `R$ ${formatPrice(pixTotal)}`;
     document.getElementById("cashTotal").textContent = `R$ ${formatPrice(cashTotal)}`;
@@ -582,7 +586,7 @@ function listenStoreStatus() {
     openSnapshot(doc(db, "configuracoes", "estabelecimento"), snapshot => {
         if (snapshot.exists()) {
             establishmentConfig = {
-                abertoManuel: snapshot.data().abertoManuel !== false,
+                abertoManual: snapshot.data().abertoManual !== false,
                 mensagemFechado: snapshot.data().mensagemFechado || "",
             };
         }
