@@ -95,9 +95,17 @@
                         <p>
                             <strong>Pagamento via Pix</strong>
                         </p>
-                        <p>Anexe o comprovante para finalizar o pedido.</p>
-                        <input type="file" id="pixProof" accept="image/*,.pdf">
+                        <p>Copie a chave Pix abaixo e, após finalizar o pedido, envie o comprovante via WhatsApp.</p>
+                    
+                        <div class="pix-copy-box">
+                            <span id="pixkeyText">84999316294</span>
+
+                            <button type="button" onclick="copyPixKey()">
+                                Copiar chave Pix
+                            </button>
+                        </div>
                     </div>
+                        
 
                     <button type="submit" class="send-btn">
                         Finalizar Pedido

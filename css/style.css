@@ -586,3 +586,29 @@ textarea {
     color: var(--yellow);
     font-weight: bold;
 }
+
+.pix-copy-box {
+    display: grid;
+    gap: 10px;
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 12px;
+    background: var(--bg-card-soft);
+    border: 1px solid var(--border-soft);
+}
+
+.pix-copy-box span {
+    word-break: break-all;
+    color: var(--yellow);
+    font-weight: bold;
+}
+
+.pix-copy-box button {
+    border: none;
+    border-radius: 12px;
+    padding: 10px;
+    background: var(--yellow);
+    color: #000000;
+    font-weight: bold;
+    cursor: pointer;
+}

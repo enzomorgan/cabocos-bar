@@ -1441,17 +1441,30 @@ function buildWhatsAppMessage(orderData) {
     return message;
 }
 
+function copyPixKey() {
+    const pixKey =  document.getElementById("pixKey")?.textContent.trim();
+
+    if (!pixKey) {
+        alert("Chave Pix não encontrada.");
+        return;
+    }
+
+    navigator.clipboard.writeText(pixKey)
+        .then(() => {
+            alert("Chave Pix copiada com sucesso.");
+        })
+        .catch(() => {
+            alert("Não foi possível copiar a chave Pix. Por favor, copie manualmente: " + pixKey);
+        });
+}
+
 document.getElementById("paymentMethod").addEventListener("change", function () {
     const pixBox = document.getElementById("pixBox");
-    const pixProof = document.getElementById("pixProof");
 
     if (this.value === "Pix") {
         pixBox.classList.remove("hidden");
-        pixProof.setAttribute("required", "required");
     } else {
         pixBox.classList.add("hidden");
-        pixProof.removeAttribute("required");
-        pixProof.value = "";
     }
 });
 
@@ -1540,7 +1553,6 @@ document.getElementById("orderForm").addEventListener("submit", async function (
     const address = document.getElementById("clientAddress").value.trim();
     const obs = document.getElementById("clientObs").value.trim();
     const payment = document.getElementById("paymentMethod").value;
-    const pixProof = document.getElementById("pixProof").files[0];
 
     if (!name || !phone || !deliveryType || !payment) {
         alert("Preencha nome, Whatsapp, tipo de entrega e forma de pagamento.");
@@ -1549,11 +1561,6 @@ document.getElementById("orderForm").addEventListener("submit", async function (
 
     if (deliveryType === "Entrega" && !address) {
         alert("Informe o endereço para entrega.");
-        return;
-    }
-
-    if (payment === "Pix" && !pixProof) {
-        alert("Para pagamento via Pix, selecione o comprovante antes de continuar.");
         return;
     }
 
@@ -1596,7 +1603,6 @@ document.getElementById("orderForm").addEventListener("submit", async function (
 
         document.getElementById("orderForm").reset();
         document.getElementById("pixBox").classList.add("hidden");
-        document.getElementById("pixProof").removeAttribute("required");
 
         window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
     } catch (error) {
@@ -1620,6 +1626,7 @@ window.closeReservationModal = closeReservationModal;
 window.continueShopping = continueShopping;
 window.goToCheckout = goToCheckout;
 window.confirmPizza = confirmPizza;
+window.copyPixKey = copyPixKey;
 
 renderCategories();
 renderMenu();
