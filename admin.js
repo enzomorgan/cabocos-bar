@@ -23,7 +23,7 @@ let unsubscribeStock = null;
 let unsubscribeReservations = null;
 let unavailableIngredients = [];
 let establishmentConfig = {
-    abertoManual = true,
+    abertoManual: true,
     mensagemFechado: "",
 };
 let firstOrderLoad = true;
