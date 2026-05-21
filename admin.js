@@ -18,6 +18,8 @@ let allOrders = [];
 let allReservations = [];
 let currentFilter = "TODOS";
 let currentFinanceFilter = "HOJE";
+let customFinanceStartDate = "";
+let customFinanceEndDate = "";
 let unsubscribeOrders = null;
 let unsubscribeStock = null;
 let unsubscribeReservations = null;
@@ -251,6 +253,19 @@ function getFinanceFilteredOrders(orders) {
             return true;
         }
 
+        if (currentFinanceFilter === "PERSONALIZADO") {
+            if (!customFinanceStartDate || !customFinanceEndDate) {
+                return false;
+            }
+
+            const orderDate = new Date(order.criadoEm);
+            
+            const startDate = new Date(`${customFinanceStartDate}T00:00:00`);
+            const endDate = new Date(`${customFinanceEndDate}T23:59:59`);
+
+            return orderDate >= startDate && orderDate <= endDate;
+        }   
+
         if (!order.criadoEm) {
             return false;
         }
@@ -296,6 +311,7 @@ function getFinanceFilterLabel() {
         SEMANA: "Resumo financeiro desta semana",
         MES: "Resumo financeiro deste mês",
         TODOS: "Resumo financeiro geral",
+        PERSONALIZADO: "Resumo financeiro personalizado",
     };
 
     return labels[currentFinanceFilter] || "Resumo financeiro";
@@ -887,6 +903,29 @@ async function toggleIngredientAvailability(id, name, isUnavailable) {
     }
 }
 
+function applyCustomFinanceFilter() {
+    const startDateInput = document.getElementById("FinanceStartDate");
+    const endInput = document.getElementById("FinanceEndDate");
+
+    if (!startDateInput || !endInput) {
+        alert("Informe a data inical e a data final");
+        return;
+    }
+
+    if (customFinanceStartDate > customFinanceEndDate) {
+        alert("A data inicial não pode ser maior que a data final.");
+        return;
+    }
+
+    currentFinanceFilter = "PERSONALIZADO";
+
+    document.querySelectorAll(".finance-filters button").forEach(button => {
+        button.classList.remove("active");
+    });
+
+    renderDailyDashboard(allOrders);
+}
+
 function filterFinance(period) {
     currentFinanceFilter = period;
 
@@ -1104,3 +1143,4 @@ window.openClientWhatsApp = openClientWhatsApp;
 window.filterFinance = filterFinance;
 window.saveStoreStatus = saveStoreStatus;
 window.cancelOrder = cancelOrder;
+window.applyCustomFinanceFilter = applyCustomFinanceFilter;

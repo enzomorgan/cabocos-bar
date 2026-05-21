@@ -1252,3 +1252,36 @@ body {
 .cancel-btn:hover {
     filter: brightness(0.95);
 }
+
+.custom-date-filter {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin: 12px 0 18px;
+}
+
+.custom-date-filter input {
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid var(--border-soft);
+    background: var(--bg-card-soft);
+    color: var(--white);
+    padding: 11px 12px;
+}
+
+.custom-date-filter button {
+    border: none;
+    border-radius: 12px;
+    padding: 11px 12px;
+    background: var(--yellow);
+    color: #000000;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+@media (min-width: 700px) {
+    .custom-date-filter {
+        grid-template-columns: 1fr 1fr auto;
+        align-items: center;
+    }
+}
