@@ -49,29 +49,31 @@
             <main class="admin-container">
                 <div id="newOrderAlert" class="new-order-alert hidden">
                     🔔 Novo pedido recebido!
-            </div>
-                <audio id="NewOrderSound" preload="auto">
+                </div>
+                <audio id="newOrderSound" preload="auto">
                     <source src="sounds/new-order.mp3" type="audio/mpeg">
                 </audio>
-                    
-                <div class="store-status-actions">
-                    <label class="store-status-toggle">
-                        <input type="checkbox" id="storeOpenToggle">
-                        <span>Estabelecimento aberto para pedidos</span>
-                    </label>
-
-                    <textarea
-                        id="closeMessageInput"
-                        placeholder="Mensagem quando estiver fechado manualmente"
-                    ></textarea>
-
-                    <button type="button" class="save-store-status-btn" onclick="saveStoreStatus()">
-                        Salvar status
-                    </button>
-                </div>
-
-
-
+                <section class="store-status-panel">
+                    <div class="store-status-header">
+                        <div>
+                            <h2>Status do estabelecimento</h2>
+                            <p>Controle manualmente se o cardápio aceita pedidos.</p>
+                        </div>
+                        <span id="storeStatusInfo" class="store-status-info">
+                            Carregando...
+                        </span>
+                    </div>
+                    <div class="store-status-actions">
+                        <label class="store-status-toggle">
+                            <input type="checkbox" id="storeOpenToggle">
+                            <span>Estabelecimento aberto para pedidos</span>
+                        </label>
+                        <textarea id="closedMessageInput" placeholder="Mensagem quando estiver fechado manualmente"></textarea>
+                        <button type="button" class="save-store-status-btn" onclick="saveStoreStatus()">
+                            Salvar status
+                        </button>
+                    </div>
+                </section>
                 <section class="summary">
                     <div class="summary-card">
                         <span>Total de pedidos</span>
@@ -97,16 +99,13 @@
                         <button type="button" class="active" onclick="filterFinance('HOJE')">
                             Hoje
                         </button>
-
                         <button type="button" onclick="filterFinance('MES')">
                             Este mês
                         </button>
-
                         <button type="button" onclick="filterFinance('TODOS')">
                             Todos
                         </button>
                     </div>
-
                     <div class="daily-cards">
                         <div class="daily-card">
                             <span>Pedidos hoje</span>
@@ -151,19 +150,16 @@
                         <p class="empty-message">Carregando ingredientes...</p>
                     </div>
                 </section>
-
                 <section class="reservations-panel">
                     <div class="reservations-header">
                         <div>
                             <h2>Reservas de mesas</h2>
                             <p>Acompanhe solicitações de reservas para aniversários e eventos</p>
                         </div>
-
                         <span id="reservationInfo" class="reservations-info">
                             Carregando reservas...
                         </span>
                     </div>
-
                     <div id="reservationsList" class="reservations-list">
                         <p class="empty-message">Carregando reservas...</p>
                     </div>
