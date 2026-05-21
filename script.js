@@ -1,9 +1,12 @@
-import { db, collection, addDoc, onSnapshot } from "./firebase.js";
+import { db, collection, addDoc, onSnapshot, doc } from "./firebase.js";
 
 const WHATSAPP_NUMBER = "5584999316294";
 const MORCEGO_DELIVERY_FEE = 5;
 
-let unavailableIngredients = [];
+let unavailableIngredients = {
+    abertoManual: true,
+    messagemFechado: "",
+};
 
 const EDGES = [
     { name: "Sem borda", price: 0, ingredients: [] },
@@ -724,6 +727,10 @@ function isThursday() {
 }
 
 function isRestaurantOpen() {
+    if (!establishmentConfig.abertoManual) {
+        return false;
+    }
+
     const now = new Date();
 
     const day = now.getDay();
@@ -740,7 +747,11 @@ function isRestaurantOpen() {
 }
 
 function getClosedMessage() {
-    return "No momento estamos fechados. Funcionamos de quinta a domingo, das 18h às 23h."
+    if(!establishmentConfig.abertoManual && establishmentConfig.messagemFechado) {
+        return establishmentConfig.messagemFechado;
+    }
+
+    return "No momento estamos fechados. Funcionamos de quinta a domingo, das 18h às 23h. Agradecemos a compreensão!";
 }
 
 function getPromotionPizzaGCount() {
@@ -780,14 +791,17 @@ function calculateTotal() {
 
 function listenUnavailableIngredients() {
     onSnapshot(collection(db, "ingredientesIndisponiveis"), snapshot => {
-        unavailableIngredients = snapshot.docs.map(document => ({
-            id: document.id,
-            ...document.data(),
-        }));
+        if (snapshot.exists()) {
+            establishmentConfig = {
+                abertoManual: snapshot.data().abertoManual !== false,
+                messagemFechado: snapshot.data().messagemFechado || "",
+            };
+        }
 
         renderMenu();
+        updateCart();
     }, error => {
-        console.error("Erro ao carregar ingredientes indisponíveis:", error);
+        console.error("Erro ao carregar configuração do estabelecimento:", error);
     });
 }
 
@@ -1611,3 +1625,4 @@ renderCategories();
 renderMenu();
 updateCart();
 listenUnavailableIngredients();
+listenEstablishmentConfig();

@@ -54,6 +54,24 @@
                     <source src="sounds/new-order.mp3" type="audio/mpeg">
                 </audio>
                     
+                <div class="store-status-actions">
+                    <label class="store-status-toggle">
+                        <input type="checkbox" id="storeOpenToggle">
+                        <span>SEstabelecimento aberto para pedidos</span>
+                    </label>
+
+                    <textarea
+                        id="closeMessageInput"
+                        placeholder="Mensagem quando estiver fechado manualmente"
+                    ></textarea>
+
+                    <button type="button" class="save-store-status-btn" onclick="saveStoreStatus()">
+                        Salvar status
+                    </button>
+                </div>
+
+
+
                 <section class="summary">
                     <div class="summary-card">
                         <span>Total de pedidos</span>

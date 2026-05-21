@@ -22,6 +22,10 @@ let unsubscribeOrders = null;
 let unsubscribeStock = null;
 let unsubscribeReservations = null;
 let unavailableIngredients = [];
+let establishmentConfig = {
+    abertoManuel = true,
+    mensagemFechado: "",
+};
 let firstOrderLoad = true;
 let knownOrderIds = new Set();
 
@@ -170,6 +174,7 @@ function showLogin() {
 function showAdmin() {
     loginScreen.classList.add("hidden");
     adminPanel.classList.remove("hidden");
+    listenStoreStatus();
     listenOrders();
     listenStock();
     listenReservations();
@@ -553,6 +558,64 @@ function notifyNewOrder(orderId) {
         setTimeout(() => {
             orderCard.classList.remove("new-order-highlight");
         }, 7000);
+    }
+}
+
+function renderStoreStatus() {
+    const toggle = document.getElementById("storeOpenToggle");
+    const messageInput = document.getElementById("closeMessageInput");
+    const info = document.getElementById("storeStatusInfo");
+
+    if (!toggle || !messageInput || !info) {
+        return;
+    }
+
+    toggle.checked = establishmentConfig.abertoManuel;
+    messageInput.value = establishmentConfig.mensagemFechado || "";
+
+    info.textContent = establishmentConfig.abertoManuel
+        ? "Aberto manualmente."
+        : "Fechado manualmente.";
+}
+
+function listenStoreStatus() {
+    openSnapshot(doc(db, "configuracoes", "estabelecimento"), snapshot => {
+        if (snapshot.exists()) {
+            establishmentConfig = {
+                abertoManuel: snapshot.data().abertoManuel !== false,
+                mensagemFechado: snapshot.data().mensagemFechado || "",
+            };
+        }
+
+        renderStoreStatus();
+    }, error => {
+        console.error("Erro ao carregar status do estabelecimento:", error);
+    });
+}
+
+async function saveStoreStatus() {
+    const toggle = document.getElementById("storeOpenToggle");
+    const messageInput = document.getElementById("closeMessageInput");
+
+    if (!toggle || !messageInput) {
+        alert("Campos de status não encontrados.");
+        return;
+    }
+
+    const abertoManual = toggle.checked;
+    const mensagemFechado = messageInput.value.trim();
+
+    try {
+        await setDoc(doc(db, "configuracoes", "estabelecimento"), {
+            abertoManual,
+            mesangemFechado,
+            atualizadoEm: new Date().toISOString(),
+    });
+
+        alert("Status do estabelecimento salvo com sucesso!");
+    } catch (error) {
+        console.error("Erro ao salvar status do estabelecimento:", error);
+        alert("Erro ao salvar status do estabelecimento.");
     }
 }
 
@@ -1006,3 +1069,4 @@ window.toggleIngredientAvailability = toggleIngredientAvailability;
 window.updateReservationStatus = updateReservationStatus;
 window.openClientWhatsApp = openClientWhatsApp;
 window.filterFinance = filterFinance;
+window.saveStoreStatus = saveStoreStatus;
