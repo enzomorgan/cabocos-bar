@@ -313,15 +313,15 @@ function renderDailyDashboard(orders) {
         : 0;
 
     const pixTotal = filteredOrders
-        .filter(order => order.pagamento === "PIX")
+        .filter(order => order.pagamento === "Pix")
         .reduce((sum, order) => sum + Number(order.total || 0), 0);
 
     const cashTotal = filteredOrders
-        .filter(order => order.pagamento === "DINHEIRO")
+        .filter(order => order.pagamento === "Dinheiro")
         .reduce((sum, order) => sum + Number(order.total || 0), 0);
 
     const cardTotal = filteredOrders
-        .filter(order => order.pagamento === "CARTÃO")
+        .filter(order => order.pagamento === "Cartão")
         .reduce((sum, order) => sum + Number(order.total || 0), 0);
 
     document.getElementById("financeTitle").textContent = getFinanceFilterLabel();
