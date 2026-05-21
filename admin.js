@@ -494,6 +494,13 @@ function renderOrders() {
                 <button type="button" class="print-btn" onclick="printOrder('${order.id}')">
                     Imprimir
                 </button>
+
+                ${order.status !== "CANCELADO"
+                    ? `<button type="button" class="cancel-btn" onClick="cancelOrder('${order.id}')">
+                        Cancelar pedido
+                    </button>`
+                    : ""
+                }   
             </div>
         </article>
     `).join("");
@@ -944,6 +951,28 @@ async function updateOrderStatus(orderId) {
     }
 }
 
+async function cancelOrder(orderId) {
+    const confirmCancel = confirm("Tem certeza que deseja cancelar este pedido?");
+
+    if (!confirmCancel) {
+        return;
+    }
+
+    try {
+        await updateDoc(doc(db, "pedidos", orderId), {
+            status: "CANCELADO",
+            canceladoEm: new Date().toISOString(),
+            atualizadoEm: new Date().toISOString(),
+        });
+
+        alert("Pedido cancelado com sucesso!");
+    } catch (error) {
+        console.error("Erro ao cancelar pedido:", error);
+        alert("Erro ao cancelar pedido.");
+    }
+}
+
+
 function printOrder(orderId) {
     const order = allOrders.find(item => item.id === orderId);
 
@@ -1074,3 +1103,4 @@ window.updateReservationStatus = updateReservationStatus;
 window.openClientWhatsApp = openClientWhatsApp;
 window.filterFinance = filterFinance;
 window.saveStoreStatus = saveStoreStatus;
+window.cancelOrder = cancelOrder;

@@ -1238,3 +1238,17 @@ body {
         flex-direction: column;
     }
 }
+
+.cancel-btn {
+    border: none;
+    border-radius: 12px;
+    padding: 10px 12px;
+    background: var(--red);
+    color: #ffffff;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.cancel-btn:hover {
+    filter: brightness(0.95);
+}
