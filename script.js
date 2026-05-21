@@ -1065,6 +1065,9 @@ function updateCart() {
             deliveryFeeBox.classList.add("hidden");
             deliveryFeeBox.innerHTML = "";
         }
+    }
+
+    cartTotal.textContent = formatPrice(total);
 }
 
 function getItemDetails(item) {
@@ -1441,7 +1444,7 @@ document.getElementById("paymentMethod").addEventListener("change", function () 
 document.getElementById("deliveryType").addEventListener("change", function () {
     const addressInput = document.getElementById("clientAddress");
 
-    if (this.value === "Retirar no local") {
+    if (this.value === "Retirada") {
         addressInput.classList.add("hidden");
         addressInput.removeAttribute("required");
         addressInput.value = "";
@@ -1549,7 +1552,8 @@ document.getElementById("orderForm").addEventListener("submit", async function (
     const orderData = {
         cliente: name,
         telefone: phone,
-        endereco: deliveryType === "Entrega" ? address : "Retirar no local",
+        tipoEntrega: deliveryType,
+        endereco: deliveryType === "Entrega" ? address : "Retirada no local",
         observacoes: obs,
         pagamento: payment,
         itens: cart.map(item => ({ ...item })),
