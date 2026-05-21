@@ -881,7 +881,7 @@ async function toggleIngredientAvailability(id, name, isUnavailable) {
 }
 
 function filterFinance(period) {
-    currentFilter = period;
+    currentFinanceFilter = period;
 
     document.querySelectorAll(".finance-filters button").forEach(button => {
         button.classList.remove("active");
