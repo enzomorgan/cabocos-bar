@@ -1101,9 +1101,16 @@ function buildPrintReceipt(order) {
         </div>
 
         <div class="receipt-section">
+            ${order.preparouEm ? `<p><strong>Em preparo:</strong> ${formatDate(order.preparouEm)}</p>` : ""}
+            ${order.saiuParaEntregaEm ? `<p><strong>Saiu para entrega:</strong> ${formatDate(order.saiuParaEntregaEm)}</p>` : ""}
+            ${order.finalizadoEm ? `<p><strong>Finalizado:</strong> ${formatDate(order.finalizadoEm)}</p>` : ""}
+            ${order.canceladoEm ? `<p><strong>Cancelado:</strong> ${formatDate(order.canceladoEm)}</p>` : ""}
+        </div>
+
+        <div class="receipt-section">
             <p><strong>Cliente:</strong> ${order.cliente || "Não informado"}</p>
             <p><strong>WhatsApp:</strong> ${order.telefone || "Não informado"}</p>
-            <p><strong>Tipo:</strong> ${order.tipoEntrega || "Entrega"}</p>
+            <p><strong>Tipo de Pedido:</strong> ${order.tipoEntrega || "Entrega"}</p>
             <p><strong>Endereço:</strong> ${order.endereco || "Não informado"}</p>
             <p><strong>Pagamento:</strong> ${order.pagamento || "Não informado"}</p>
         </div>

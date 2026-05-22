@@ -1285,3 +1285,14 @@ body {
         align-items: center;
     }
 }
+
+.receipt-highlight {
+    border: 2px dashed #000000;
+    padding: 8px;
+    margin: 8px 0;
+}
+
+.receipt-highlight p {
+    font-size: 14px;
+    font-weight: bold;
+}
