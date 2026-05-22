@@ -7,8 +7,8 @@ let unavailableIngredients = [];
 
 let estabishmentConfig = {
     abertoManual: true,
-    messagemFechado: "",
-}
+    mensagemFechado: "",
+};
 
 const EDGES = [
     { name: "Sem borda", price: 0, ingredients: [] },
