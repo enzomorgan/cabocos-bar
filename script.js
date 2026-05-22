@@ -3,10 +3,12 @@ import { db, collection, addDoc, onSnapshot, doc } from "./firebase.js";
 const WHATSAPP_NUMBER = "5584999316294";
 const MORCEGO_DELIVERY_FEE = 5;
 
-let unavailableIngredients = {
+let unavailableIngredients = [];
+
+let estabishmentConfig = {
     abertoManual: true,
     messagemFechado: "",
-};
+}
 
 const EDGES = [
     { name: "Sem borda", price: 0, ingredients: [] },
@@ -747,8 +749,8 @@ function isRestaurantOpen() {
 }
 
 function getClosedMessage() {
-    if(!establishmentConfig.abertoManual && establishmentConfig.messagemFechado) {
-        return establishmentConfig.messagemFechado;
+    if (!establishmentConfig.abertoManual && establishmentConfig.mensagemFechado) {
+        return establishmentConfig.mensagemFechado;
     }
 
     return "No momento estamos fechados. Funcionamos de quinta a domingo, das 18h às 23h. Agradecemos a compreensão!";
