@@ -5,7 +5,7 @@ const MORCEGO_DELIVERY_FEE = 5;
 
 let unavailableIngredients = [];
 
-let estabishmentConfig = {
+let establishmentConfig = {
     abertoManual: true,
     mensagemFechado: "",
 };
