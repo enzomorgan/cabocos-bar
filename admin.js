@@ -643,15 +643,29 @@ function renderStoreStatus() {
 function listenStoreStatus() {
     onSnapshot(doc(db, "configuracoes", "estabelecimento"), snapshot => {
         if (snapshot.exists()) {
+            const data = snapshot.data();
+
             establishmentConfig = {
                 abertoManual: snapshot.data().abertoManual !== false,
                 mensagemFechado: snapshot.data().mensagemFechado || "",
+            };
+        } else {
+            establishmentConfig = {
+                abertoManual: true,
+                mensagemFechado: "",
             };
         }
 
         renderStoreStatus();
     }, error => {
         console.error("Erro ao carregar status do estabelecimento:", error);
+
+        establishmentConfig = {
+            abertoManual: true,
+            mensagemFechado: "",
+        };
+
+        renderStoreStatus();
     });
 }
 
