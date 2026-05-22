@@ -805,7 +805,7 @@ function listenUnavailableIngredients() {
 }
 
 function listenEstablishmentConfig() {
-    onSnapshot(doc(db, "configuracao", "estabelecimento"), snapshot => {
+    onSnapshot(doc(db, "configuracoes", "estabelecimento"), snapshot => {
         if (snapshot.exists()) {
             const data = snapshot.data();
 
