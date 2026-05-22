@@ -30,6 +30,8 @@ let establishmentConfig = {
 };
 let firstOrderLoad = true;
 let knownOrderIds = new Set();
+let firstReservationLoad = true;
+let knownReservationIds = new Set();
 
 const ingredientsList = [
     "Molho de tomate",
@@ -588,6 +590,39 @@ function notifyNewOrder(orderId) {
     }
 }
 
+function notifyNewReservation(reservationId) {
+    const alertBox = document.getElementById("newReservationAlert");
+    const sound = document.getElementById("newReservationSound");
+
+    if (alertBox) {
+        alertBox.classList.remove("hidden");
+        alertBox.classList.add("show");
+
+        setTimeout(() => {
+            alertBox.classList.add("hidden");
+            alertBox.classList.remove("show");
+        }, 5000);
+    }
+
+    if (sound) {
+        sound.currentTime = 0;
+
+        sound.play().catch(() => {
+            console.warn("O navegador bloqueou o som até haver interação com a página.");
+        });
+    }
+
+    const reservationCard = document.getElementById(`reservation-${reservationId}`);
+
+    if (reservationCard) {
+        reservationCard.classList.add("new-reservation-highlight");
+
+        setTimeout(() => {
+            reservationCard.classList.remove("new-reservation-highlight");
+        }, 7000);
+    }
+}
+
 function renderStoreStatus() {
     const toggle = document.getElementById("storeOpenToggle");
     const messageInput = document.getElementById("closedMessageInput");
@@ -777,6 +812,8 @@ function listenReservations() {
     );
 
     unsubscribeReservations = onSnapshot(reservationsQuery, snapShot => {
+        const previousReservationIds = new Set(knownReservationIds);
+
         allReservations = snapShot.docs.map(document => {
             const data = document.data();
 
@@ -787,17 +824,29 @@ function listenReservations() {
             };
         });
 
-        renderReservations();
-    }, error => {
-        console.error("Erro ao carregar reservar", error);
+        knownReservationIds = new Set(allReservations.map(reservation => reservation.id));
 
-        document.getElementById("reservationInfo").textContent = "Erro ao carregar reservas";
-        document.getElementById("reservationsList").innerHTML = `
-            <p class="empty-message">
-                Erro ao carregar reservas. Verifique o console.
-            </p>
-        `;
-    });
+        const newReservations = allReservations.filter(reservation =>
+            !previousReservationIds.has(reservation.id)
+        );
+
+        renderReservations();
+
+        if (!firstReservationLoad && newReservations.length > 0) {
+            notifyNewReservation(newReservations[0].id);
+        }
+
+        firstReservationLoad = false;
+        }, error => {
+            console.error("Erro ao carregar reservar", error);
+
+            document.getElementById("reservationInfo").textContent = "Erro ao carregar reservas";
+            document.getElementById("reservationsList").innerHTML = `
+                <p class="empty-message">
+                    Erro ao carregar reservas. Verifique o console.
+                </p>
+            `;
+        });
 }
 
 function renderReservations() {
@@ -825,7 +874,7 @@ function renderReservations() {
     info.textContent = `${allReservations.length} reserva(s), ${pendingReservations} nova(s).`;
 
     container.innerHTML = allReservations.map(reservation => `
-        <article class="reservation-card ${reservationStatusClass(reservation.status)}">
+        <article id="reservation-${reservation.id}" class="reservation-card ${reservationStatusClass(reservation.status)}">
             <div class="reservation-top">
                 <div>
                     <h3>Reserva #${reservation.shortId}</h3>
