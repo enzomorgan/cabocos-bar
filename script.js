@@ -729,23 +729,7 @@ function isThursday() {
 }
 
 function isRestaurantOpen() {
-    if (!establishmentConfig.abertoManual) {
-        return false;
-    }
-
-    const now = new Date();
-
-    const day = now.getDay();
-    const hour = now.getHours();
-    const minutes = now.getMinutes();
-
-    const isAllowedDay = day === 0 || day === 4 || day === 5 || day === 6;
-
-    const currentMinutes = hour * 60 + minutes;
-    const openingMinutes = 18 * 60;
-    const closingMinutes = 23 * 60;
-
-    return isAllowedDay && currentMinutes >= openingMinutes && currentMinutes <= closingMinutes;
+    return establishmentConfig.abertoManual === true;
 }
 
 function getClosedMessage() {
