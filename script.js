@@ -793,17 +793,42 @@ function calculateTotal() {
 
 function listenUnavailableIngredients() {
     onSnapshot(collection(db, "ingredientesIndisponiveis"), snapshot => {
+        unavailableIngredients = snapshot.docs.map(document => ({
+            id: document.id,
+            ...document.data(),
+        }));
+
+        renderMenu();
+    }, error => {
+        console.error("Erro ao carregar ingredientes indisponíveis.", error);
+    });
+}
+
+function listenEstablishmentConfig() {
+    onSnapshot(doc(db, "configuracao", "estabelecimento"), snapshot => {
         if (snapshot.exists()) {
+            const data = snapshot.data();
+
             establishmentConfig = {
-                abertoManual: snapshot.data().abertoManual !== false,
-                messagemFechado: snapshot.data().messagemFechado || "",
+                abertoManual: data.abertoManual !== false,
+                mensagemFechado: data.mensagemFechado || "",
+            };
+        } else {
+            establishmentConfig = {
+                abertoManual: true,
+                mensagemFechado: "",
             };
         }
 
         renderMenu();
         updateCart();
     }, error => {
-        console.error("Erro ao carregar configuração do estabelecimento:", error);
+        console.error("Erro ao carregar configuração do estabelecimento.", error);
+
+        establishmentConfig = {
+            abertoManual: true,
+            mensagemFechado: "",
+        };
     });
 }
 
