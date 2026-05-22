@@ -592,7 +592,7 @@ function notifyNewOrder(orderId) {
 
 function notifyNewReservation(reservationId) {
     const alertBox = document.getElementById("newReservationAlert");
-    const sound = document.getElementById("newReservationSound");
+    const sound = document.getElementById("newOrderSound");
 
     if (alertBox) {
         alertBox.classList.remove("hidden");
@@ -953,11 +953,19 @@ async function toggleIngredientAvailability(id, name, isUnavailable) {
 }
 
 function applyCustomFinanceFilter() {
-    const startDateInput = document.getElementById("FinanceStartDate");
-    const endInput = document.getElementById("FinanceEndDate");
+    const startDateInput = document.getElementById("financeStartDate");
+    const endInput = document.getElementById("financeEndDate");
 
     if (!startDateInput || !endInput) {
-        alert("Informe a data inical e a data final");
+        alert("Campos de data não encontrados.");
+        return;
+    }
+
+    customFinanceStartDate = startDateInput.value;
+    customFinanceEndDate = endInput.value;
+
+    if (!customFinanceStartDate || !customFinanceEndDate) {
+        alert("Informe a data inicial e a data final.");
         return;
     }
 

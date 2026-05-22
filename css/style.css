@@ -612,3 +612,13 @@ textarea {
     font-weight: bold;
     cursor: pointer;
 }
+
+.morcego-warning {
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: rgba(247, 201, 72, 0.12);
+    border: 1px solid rgba(247, 201, 72, 0.45);
+    color: var(--yellow);
+    font-weight: bold;
+    font-size: 14px;
+}

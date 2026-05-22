@@ -787,6 +787,22 @@ function getDeliveryFee() {
     return 0;
 }
 
+function updateMorcegoWarning() {
+    const warning = document.getElementById("morcegoWarning");
+    const deliveryType = document.getElementById("deliveryType")?.value;
+    const address = document.getElementById("clientAddress")?.value || "";
+
+    if (!warning) {
+        return;
+    }
+
+    if (deliveryType === "Entrega" && hasMorcegoAddress(address)) {
+        warning.classList.remove("hidden");
+    } else {
+        warning.classList.add("hidden");
+    }
+}
+
 function calculateTotal() {
     return calculateSubtotal() + getDeliveryFee();
 }
@@ -1481,9 +1497,13 @@ document.getElementById("deliveryType").addEventListener("change", function () {
         addressInput.classList.remove("hidden");
         addressInput.setAttribute("required", "required");
     }
+
+    updateMorcegoWarning();
+    updateCart();
 });
 
 document.getElementById("clientAddress").addEventListener("input", function () {
+    updateMorcegoWarning();
     updateCart();
 });
 
