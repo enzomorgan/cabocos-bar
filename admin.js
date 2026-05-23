@@ -997,6 +997,31 @@ function applyCustomFinanceFilter() {
     renderDailyDashboard(allOrders);
 }
 
+function showAdminTab(tabName) {
+    document.querySelectorAll(".admin-tab-content").forEach(tab => {
+        tab.classList.add("hidden");
+        tab.classList.remove("active");
+    });
+
+    const selectedTab = document.getElementById(`tab-${tabName}`);
+
+    if (selectedTab) {
+        selectedTab.classList.remove("hidden");
+        selectedTab.classList.add("active");
+    }
+
+    document.querySelectorAll(".admin-tabs button").forEach(button => {
+        button.classList.remove("active");
+    });
+
+    const clickedButton = Array.from(document.querySelectorAll(".admin-tabs button"))
+        .find(button => button.getAttribute("onclick") === `showAdminTab('${tabName}')`);
+
+    if (clickedButton) {
+        clickedButton.classList.add("active");
+    }
+}
+
 function filterFinance(period) {
     currentFinanceFilter = period;
 
@@ -1222,3 +1247,4 @@ window.filterFinance = filterFinance;
 window.saveStoreStatus = saveStoreStatus;
 window.cancelOrder = cancelOrder;
 window.applyCustomFinanceFilter = applyCustomFinanceFilter;
+window.showAdminTab = showAdminTab;

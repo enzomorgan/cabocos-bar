@@ -1296,3 +1296,53 @@ body {
     font-size: 14px;
     font-weight: bold;
 }
+
+/* ABAS DO PAINEL ADMIN */
+
+.admin-tabs {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+    padding: 10px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-soft);
+    border-radius: 16px;
+}
+
+.admin-tabs button {
+    border: 1px solid var(--border-soft);
+    background: var(--bg-card-soft);
+    color: var(--white);
+    border-radius: 12px;
+    padding: 11px 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.admin-tabs button:hover,
+.admin-tabs button.active {
+    background: var(--yellow);
+    color: #000000;
+    border-color: var(--yellow);
+}
+
+.admin-tab-content {
+    display: block;
+}
+
+.admin-tab-content.hidden {
+    display: none;
+}
+
+@media (max-width: 650px) {
+    .admin-tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .admin-tabs button {
+        width: 100%;
+    }
+}
