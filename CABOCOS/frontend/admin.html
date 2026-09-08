@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Painel Administrativo - Cabocos Bar</title>
+        <link rel="stylesheet" href="css/admin.css">
+    </head>
+
+    <body>
+        <!-- TELA DE LOGIN -->
+        <section id="loginScreen" class="login-screen">
+            <form id="loginForm" class="login-card">
+                <h1>Cabocos Bar</h1>
+                <p>Painel Administrativo</p>
+
+                <input
+                    type="email"
+                    id="adminEmail"
+                    placeholder="E-mail"
+                    required
+                >
+
+                <input
+                    type="password"
+                    id="adminPassword"
+                    placeholder="Senha"
+                    required
+                >
+
+                <button type="submit">
+                    Entrar
+                </button>
+
+                <span id="loginError" class="login-error"></span>
+            </form>
+        </section>
+
+        <!-- PAINEL ADMIN -->
+        <section id="adminPanel" class="admin-panel hidden">
+            <header class="admin-header">
+                <div>
+                    <h1>Cabocos Bar</h1>
+                    <p>Painel Administrativo</p>
+                </div>
+
+                <div class="admin-header-actions">
+                    <a href="index.html" class="back-site-btn">
+                        Ver cardápio
+                    </a>
+
+                    <button type="button" class="logout-btn" onclick="logoutAdmin()">
+                        Sair
+                    </button>
+                </div>
+            </header>
+
+            <main class="admin-container">
+                <div id="newOrderAlert" class="new-order-alert hidden">
+                    🔔 Novo pedido recebido!
+                </div>
+
+                <div id="newReservationAlert" class="new-reservation-alert hidden">
+                    🔔 Nova reserva recebida!
+                </div>
+
+                <audio id="newOrderSound" preload="auto">
+                    <source src="sounds/new-order.mp3" type="audio/mpeg">
+                </audio>
+
+                <section class="store-status-panel">
+                    <div class="store-status-header">
+                        <div>
+                            <h2>Status do estabelecimento</h2>
+                            <p>Controle manualmente se o cardápio aceita pedidos.</p>
+                        </div>
+
+                        <span id="storeStatusInfo" class="store-status-info">
+                            Carregando...
+                        </span>
+                    </div>
+
+                    <div class="store-status-actions">
+                        <label class="store-status-toggle">
+                            <input type="checkbox" id="storeOpenToggle">
+                            <span>Estabelecimento aberto para pedidos</span>
+                        </label>
+
+                        <textarea
+                            id="closedMessageInput"
+                            placeholder="Mensagem quando estiver fechado manualmente"
+                        ></textarea>
+
+                        <button type="button" class="save-store-status-btn" onclick="saveStoreStatus()">
+                            Salvar status
+                        </button>
+                    </div>
+                </section>
+
+                <nav class="admin-tabs">
+                    <button type="button" class="active" onclick="showAdminTab('pedidos')">
+                        Pedidos
+                    </button>
+
+                    <button type="button" onclick="showAdminTab('faturamento')">
+                        Faturamento
+                    </button>
+
+                    <button type="button" onclick="showAdminTab('estoque')">
+                        Estoque
+                    </button>
+
+                    <button type="button" onclick="showAdminTab('reservas')">
+                        Reservas
+                    </button>
+                </nav>
+
+                <!-- ABA PEDIDOS -->
+                <div id="tab-pedidos" class="admin-tab-content active">
+                    <section class="filters">
+                        <button type="button" onclick="filterStatus('TODOS')" class="active">
+                            Todos
+                        </button>
+
+                        <button type="button" onclick="filterStatus('NOVO')">
+                            Novos
+                        </button>
+
+                        <button type="button" onclick="filterStatus('PREPARO')">
+                            Em preparo
+                        </button>
+
+                        <button type="button" onclick="filterStatus('ENTREGA')">
+                            Saiu para entrega
+                        </button>
+
+                        <button type="button" onclick="filterStatus('FINALIZADO')">
+                            Finalizados
+                        </button>
+
+                        <button type="button" onclick="filterStatus('CANCELADO')">
+                            Cancelados
+                        </button>
+                    </section>
+
+                    <section class="orders-header">
+                        <h2>Pedidos recebidos</h2>
+                        <p id="ordersInfo">Carregando pedidos...</p>
+                    </section>
+
+                    <section id="orders" class="orders">
+                        <p class="empty-message">Carregando pedidos...</p>
+                    </section>
+                </div>
+
+                <!-- ABA FATURAMENTO -->
+                <div id="tab-faturamento" class="admin-tab-content hidden">
+                    <section class="summary">
+                        <div class="summary-card">
+                            <span>Total de pedidos</span>
+                            <strong id="totalOrders">0</strong>
+                        </div>
+
+                        <div class="summary-card">
+                            <span>Pedidos novos</span>
+                            <strong id="newOrders">0</strong>
+                        </div>
+
+                        <div class="summary-card">
+                            <span>Total vendido</span>
+                            <strong id="totalSold">R$ 0,00</strong>
+                        </div>
+                    </section>
+
+                    <section class="daily-dashboard">
+                        <div class="dashboard-header">
+                            <div>
+                                <h2 id="financeTitle">Resumo financeiro de hoje</h2>
+                                <p id="financeSubtitle">Acompanhe os pedidos e vendas do dia atual.</p>
+                            </div>
+                        </div>
+
+                        <div class="finance-filters">
+                            <button type="button" class="active" onclick="filterFinance('HOJE')">
+                                Hoje
+                            </button>
+
+                            <button type="button" onclick="filterFinance('MES')">
+                                Este mês
+                            </button>
+
+                            <button type="button" onclick="filterFinance('TODOS')">
+                                Todos
+                            </button>
+                        </div>
+
+                        <div class="custom-date-filter">
+                            <input type="date" id="financeStartDate">
+                            <input type="date" id="financeEndDate">
+
+                            <button type="button" onclick="applyCustomFinanceFilter()">
+                                Aplicar período
+                            </button>
+                        </div>
+
+                        <div class="daily-cards">
+                            <div class="daily-card">
+                                <span>Pedidos hoje</span>
+                                <strong id="todayOrders">0</strong>
+                            </div>
+
+                            <div class="daily-card">
+                                <span>Vendido hoje</span>
+                                <strong id="todaySold">R$ 0,00</strong>
+                            </div>
+
+                            <div class="daily-card">
+                                <span>Ticket médio</span>
+                                <strong id="averageTicket">R$ 0,00</strong>
+                            </div>
+                        </div>
+
+                        <div class="payment-summary">
+                            <div class="payment-card">
+                                <span>Pix</span>
+                                <strong id="pixTotal">R$ 0,00</strong>
+                            </div>
+
+                            <div class="payment-card">
+                                <span>Cartão</span>
+                                <strong id="cardTotal">R$ 0,00</strong>
+                            </div>
+
+                            <div class="payment-card">
+                                <span>Dinheiro</span>
+                                <strong id="cashTotal">R$ 0,00</strong>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- ABA ESTOQUE -->
+                <div id="tab-estoque" class="admin-tab-content hidden">
+                    <section class="stock-panel">
+                        <div class="stock-header">
+                            <div>
+                                <h2>Controle de estoque</h2>
+                                <p>Marque os ingredientes que estão indisponíveis no momento.</p>
+                            </div>
+
+                            <span id="stockInfo" class="stock-info">
+                                Carregando estoque...
+                            </span>
+                        </div>
+
+                        <div id="ingredientsStock" class="ingredients-stock">
+                            <p class="empty-message">Carregando ingredientes...</p>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- ABA RESERVAS -->
+                <div id="tab-reservas" class="admin-tab-content hidden">
+                    <section class="reservations-panel">
+                        <div class="reservations-header">
+                            <div>
+                                <h2>Reservas de mesas</h2>
+                                <p>Acompanhe solicitações de reservas para aniversários e eventos.</p>
+                            </div>
+
+                            <span id="reservationInfo" class="reservations-info">
+                                Carregando reservas...
+                            </span>
+                        </div>
+
+                        <div id="reservationsList" class="reservations-list">
+                            <p class="empty-message">Carregando reservas...</p>
+                        </div>
+                    </section>
+                </div>
+            </main>
+        </section>
+
+        <section id="printArea" class="print-area"></section>
+
+        <script type="module" src="admin.js"></script>
+    </body>
+</html>
