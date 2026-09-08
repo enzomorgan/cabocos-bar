@@ -1,0 +1,31 @@
+# Ambiente virtual
+venv/
+venv/
+
+# Variáveis de ambiente
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Banco SQLite
+db.sqlite3
+
+# Mídia
+media/
+
+# Arquivos estáticos coletados
+staticfiles/
+
+# IDEs
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Sistema
+.DS_Store
+Thumbs.db
